@@ -1,5 +1,6 @@
 require "station"
 require "gui"
+require "button"
 
 
 -- called once at startup, load resources here
@@ -30,6 +31,29 @@ function love.load()
     time_s = 5* 3600
     yen = 0
 
+    all_buttons = {}
+
+    test_button = Button:create(500, 500, 250, 250)
+    test_button.clicked = false
+    function test_button:draw()
+        oldr, oldg, oldb = love.graphics.getColor()
+        if self.hovered then
+            love.graphics.setColor(255, 0, 0)
+        else
+            if self.clicked then
+                love.graphics.setColor(0, 255, 255)
+            else
+                love.graphics.setColor(0, 0, 255)
+            end
+        end
+        love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+        love.graphics.setColor(oldr, oldg, oldb)
+    end
+    function test_button:buttonPressed(button, istouch, presses)
+        self.clicked = true
+    end
+
+    table.insert(all_buttons, test_button)
 end
 
 -- called continuously, drawing happens here
@@ -45,25 +69,10 @@ function love.draw()
         love.graphics.translate(-pos, 0)
         stations[current_station]:draw()
         gui:draw()
-        --[[
-        pos = (wagon_num - 1) * 1920
-        love.graphics.translate(-pos, 0)
-        if level == "shimbashi" then
-            for i = 1, 10 do
-                love.graphics.draw(shimbashi, (i-1) * 1920, 0)
-                love.graphics.draw(train, (i-1) * 1920 + 100, 300, 0, 2.5,2.5)
-                love.graphics.draw(platform, (i-1) * 1920, -1080, 0, 1, 2)
-            end
-        end
-        love.graphics.setColor(0,255,255)
-        love.graphics.rectangle("fill", 100+pos, 50, 800, 200)
-        love.graphics.setColor(0,0,255)
-        love.graphics.rectangle("fill", 950+pos, 50, 300, 200)
-        love.graphics.setColor(0,0,0)
-        love.graphics.print("Money " .. yen, 1400+pos, 50)
-        love.graphics.print("time", 1400+pos, 150)
-        love.graphics.rectangle("fill", 1400+pos, 300, 500, 750)
-        ]]--
+    end
+
+    for i, button in pairs(all_buttons) do
+        button:draw()
     end
 end
 
@@ -76,6 +85,18 @@ function love.update(dt)
     time_m = math.floor(time_s/60) % 60 
     time_h = math.floor(time_s/3600) % 24
     stations[current_station]:update(dt)
+end
+
+function love.mousemoved(x, y, dx, dy, istouch)
+    for i, button in pairs(all_buttons) do
+        button:mousemoved(x, y, dx, dy, istouch)
+    end
+end
+
+function love.mousepressed(x, y, button, istouch, presses)
+    for i, button in pairs(all_buttons) do
+        button:mousepressed(x, y, button, istouch, presses)
+    end
 end
 
 function love.keypressed(key)
