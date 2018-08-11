@@ -65,7 +65,7 @@ function love.draw()
     --love.graphics.print("Hello World", 400, 300)
     --love.graphics.scale(1920, 1080)
     if mode == "game" then 
-        pos = (wagon_num - 1) * g_wagon:getWidth()*2.5
+        pos = (wagon_num - 1) * g_wagon:getWidth()
         love.graphics.translate(-pos, 0)
         stations[current_station]:draw()
 
@@ -126,6 +126,46 @@ function love.keypressed(key)
 
         if key == "right" then
             wagon_num = math.min(wagon_num + 1, 10)
+        end
+
+        if key == "1" then
+            wagon_num = 1
+        end
+
+        if key == 2 then
+            wagon_num = 2
+        end
+
+        if key == 3 then
+            wagon_num = 3
+        end
+
+        if key == 4 then
+            wagon_num = 4
+        end
+
+        if key == 5 then
+            wagon_num = 5
+        end
+
+        if key == 6 then
+            wagon_num = 6
+        end
+
+        if key == 7 then
+            wagon_num = 7
+        end
+
+        if key == 8 then
+            wagon_num = 8
+        end
+
+        if key == 9 then
+            wagon_num = 9
+        end
+
+        if key == 0 then
+            wagon_num = 10
         end
     end
 end

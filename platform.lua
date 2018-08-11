@@ -74,33 +74,55 @@ function Platform:create(num)
 end
 
 function Platform:draw(status, animate_factor)
-    love.graphics.draw(g_platform, (self.number-1) * g_platform:getWidth(), -g_platform:getHeight(), 0, 1, 2)
+    local s = 100.0/1500.0
+    local oldr, oldg, oldb = love.graphics.getColor()
+    love.graphics.draw(g_platform, (self.number-1) * g_platform:getWidth(), 0)
+    love.graphics.draw(g_platform, pos + (self.number-1) * g_platform:getWidth() * s +50, 150, 0, s, s)
+    love.graphics.setColor(255,0,0)
+    love.graphics.circle("fill",pos + (self.number-1) * 100 + 50 + 50, 225, 15)
+    love.graphics.setColor(oldr, oldg, oldb)
+
+
+    -- train animation
     if status == "leaving" then
         if self.wagon_type == "normal" then
-            love.graphics.draw(g_wagon, (self.number-1) * (g_wagon:getWidth() * 2.5) + 100 - animate_factor, 300, 0, 2.5, 2.5)
+            love.graphics.draw(g_wagon, (self.number-1) * (g_wagon:getWidth()) + 100 - animate_factor, 300)
+            -- gui
+            love.graphics.draw(g_wagon, pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
         end
     end
     if status == "entering" then
         if self.wagon_type == "normal" then
-            love.graphics.draw(g_wagon, (self.number-1) * (g_wagon:getWidth() * 2.5) + 100 + g_platform:getWidth()*10 - animate_factor, 300, 0, 2.5, 2.5)
+            love.graphics.draw(g_wagon, (self.number-1) * g_wagon:getWidth() + 100 + g_platform:getWidth()*10 - animate_factor, 300)
+            love.graphics.draw(g_wagon, pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
         end
     end
     if status == "stopping" then
         if self.wagon_type == "normal" then
-            love.graphics.draw(g_wagon, (self.number-1) * (g_wagon:getWidth() * 2.5) + 100, 300, 0, 2.5, 2.5)
+            love.graphics.draw(g_wagon, (self.number-1) * g_wagon:getWidth() + 100, 300)
+            love.graphics.setColor(255,0,0)
+            love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 100)
+            love.graphics.setColor(oldr, oldg, oldb)
+            love.graphics.draw(g_wagon, pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
         end
     end
 
     --humans
     for i, human in pairs(self.people) do
         for j = 1, math.min(10,human) do
-            love.graphics.draw(g_human, ((self.number-1)*4 +i) * g_wagon:getWidth()*2.5/4 - 50, g_platform:getHeight() * 0.6 + (j * 2.5 * math.min(10,human)), 0, 2.5, 2.5)
+            love.graphics.draw(g_human, ((self.number-1)*4 +i) * g_wagon:getWidth()/4 - 50, g_platform:getHeight() * 0.6 + (j *  math.min(10,human)))
         end
     end
 
 --    love.graphics.print(self.people[4]+self.people[1]+self.people[2]+self.people[3], 1000*(self.number-1),1000)
     for i, button in pairs(self.push_buttons) do
         button:draw()
+    end
+
+    if self.number == wagon_num then
+        love.graphics.setColor(255,255,0)
+        love.graphics.rectangle("line", pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 150)
+        love.graphics.setColor(oldr, oldg, oldb)
     end
 end
 
