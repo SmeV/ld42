@@ -65,7 +65,7 @@ end
 
 -- called continuously, do math here
 function love.update(dt)
-
+    stations[current_station]:update(dt)
 end
 
 function love.keypressed(key)
