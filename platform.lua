@@ -28,16 +28,19 @@ function Platform:create(num)
     platform.push4 = Button:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 3 * 400, 300, (g_wagon:getWidth() / 4), 600)
     platform.push1.clicked = 0
     function platform.push1:buttonPressed()
+        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[1])
         platform.people[1] = math.max(0, platform.people[1] - 1)
-        self.clicked = self.clicked + 1
     end
     function platform.push2:buttonPressed()
+        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[2])
         platform.people[2] = math.max(0, platform.people[2] - 1)
     end
     function platform.push3:buttonPressed()
+        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[3])
         platform.people[3] = math.max(0, platform.people[3] - 1)
     end
     function platform.push4:buttonPressed()
+        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[4])
         platform.people[4] = math.max(0, platform.people[4] - 1)
     end
     function platform.push1:draw()
@@ -106,7 +109,7 @@ function Platform:update(dt, modifier, status)
     if self.custom_dt > 1 then
         for i = 1, 4 do
             if status == "stopping" then
-                self.boarded_people = self.boarded_people + math.max(self.people[i]-1*self.boarding_multiplier,0)
+                self.boarded_people = self.boarded_people + math.min(1, self.people[i]) * self.boarding_multiplier
                 self.people[i] = math.max(self.people[i]-1*self.boarding_multiplier,0)
             end
 
