@@ -33,7 +33,7 @@ function love.load()
 
     all_buttons = {}
 
-    test_button = Button:create(500, 500, 250, 250)
+    test_button = Button:create(0, 0, 250, 250)
     test_button.clicked = false
     function test_button:draw()
         oldr, oldg, oldb = love.graphics.getColor()
@@ -53,7 +53,7 @@ function love.load()
         self.clicked = true
     end
 
-    table.insert(all_buttons, test_button)
+    --table.insert(all_buttons, test_button)
 end
 
 -- called continuously, drawing happens here
@@ -68,7 +68,7 @@ function love.draw()
         pos = (wagon_num - 1) * g_wagon:getWidth()*2.5
         love.graphics.translate(-pos, 0)
         stations[current_station]:draw()
-        gui:draw()
+        gui:draw(stations[current_station].platforms[wagon_num].num_people)
     end
 
     for i, button in pairs(all_buttons) do
@@ -91,12 +91,14 @@ function love.mousemoved(x, y, dx, dy, istouch)
     for i, button in pairs(all_buttons) do
         button:mousemoved(x, y, dx, dy, istouch)
     end
+    stations[current_station]:mousemoved(x, y, dx, dy, istouch)
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
     for i, button in pairs(all_buttons) do
         button:mousepressed(x, y, button, istouch, presses)
     end
+    stations[current_station]:mousepressed(x, y, button, istouch, presses)
 end
 
 function love.keypressed(key)

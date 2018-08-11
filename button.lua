@@ -4,12 +4,11 @@ Button.__index = Button
 function Button:create(x, y, width, height) 
     local button = {}
     setmetatable(button, Button)
-    self.x = x
-    self.y = y
-    self.width = width
-    self.height = height
-
-    self.hovered = false
+    button.x = x
+    button.y = y
+    button.width = width
+    button.height = height
+    button.hovered = false
 
     return button
 end
