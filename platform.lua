@@ -1,4 +1,6 @@
 require "button"
+require "waitingline"
+require "human"
 
 Platform = {}
 Platform.__index = Platform
@@ -13,6 +15,12 @@ function Platform:create(num)
     table.insert(platform.people, 0)
     table.insert(platform.people, 0)
     table.insert(platform.people, 0)
+
+    platform.lines = {}
+    table.insert(platform.lines, WaitingLine:create())
+    table.insert(platform.lines, WaitingLine:create())
+    table.insert(platform.lines, WaitingLine:create())
+    table.insert(platform.lines, WaitingLine:create())
 
     platform.num_people = 0
     platform.wagon_type = "none"
@@ -45,15 +53,20 @@ function Platform:draw(status, animate_factor)
     end
 
     --humans
+    --[[
     for i, human in pairs(self.people) do
         for j = 1, math.min(10,human) do
             love.graphics.draw(g_human, ((self.number-1)*4 +i) * g_wagon:getWidth()*2.5/4 - 50, g_platform:getHeight() * 0.6 + (j * 2.5 * math.min(10,human)), 0, 2.5, 2.5)
         end
     end
+    ]]--
 
 --    love.graphics.print(self.people[4]+self.people[1]+self.people[2]+self.people[3], 1000*(self.number-1),1000)
     for i, clickable in pairs(self.push_clickables) do
         clickable:draw()
+    end
+    for i, line in pairs(self.lines) do
+        line:draw(((self.number-1)*4 + i) * g_wagon:getWidth()*2.5/4 - 50, g_platform:getHeight() * 0.6)
     end
 end
 
@@ -64,26 +77,46 @@ function Platform:update(dt, modifier, status)
             if status == "stopping" then
                 self.boarded_people = self.boarded_people + math.min(1, self.people[i]) * self.boarding_multiplier
                 self.people[i] = math.max(self.people[i]-1*self.boarding_multiplier,0)
+                while self.lines[i]:getSize() < 10 and self.lines[i]:getSize() < self.people[i] do
+                    self.lines[i]:push(Human:create())
+                end
             end
 
             if time_s >= 5*3600 and time_s <= 5.5 * 3600 then
                 self.people[i] = self.people[i] + math.random(0, 1)
+                while self.lines[i]:getSize() < 10 and self.lines[i]:getSize() < self.people[i] do
+                    self.lines[i]:push(Human:create())
+                end
             end
 
             if time_s > 5.5 *3600 and time_s <= 9 * 3600 then
                 self.people[i] = self.people[i] + math.floor((time_h - 4) * modifier * math.random(50, 100) / 40 * self.custom_dt)
+                while self.lines[i]:getSize() < 10 and self.lines[i]:getSize() < self.people[i] do
+                    self.lines[i]:push(Human:create())
+                end
             end
 
             if time_s > 9 *3600 and time_s <= 14 * 3600 then
                 self.people[i] = self.people[i] + math.floor((15 - time_h) * modifier * math.random(10, 50) / 40 * self.custom_dt)
+                while self.lines[i]:getSize() < 10 and self.lines[i]:getSize() < self.people[i] do
+                    self.lines[i]:push(Human:create())
+                end
             end
 
             if time_s > 14 *3600 and time_s <= 21 * 3600 then
                 self.people[i] = self.people[i] + math.floor((time_h - 13) * modifier * math.random(30, 80) / 40 * self.custom_dt)
+                while self.lines[i]:getSize() < 10 and self.people[i] > 0 do
+                    self.lines[i]:push(Human:create())
+                    self.people[i] = self.people[i] - 1
+                end
             end
 
             if time_s > 21 *3600 and time_s <= 24 * 3600 then
                 self.people[i] = self.people[i] + math.floor((25 - time_h) * modifier * math.random(30, 80) / 40 * self.custom_dt)
+                while self.lines[i]:getSize() < 10 and self.people[i] > 0 do
+                    self.lines[i]:push(Human:create())
+                    self.people[i] = self.people[i] - 1
+                end
             end
         end
         self.custom_dt = 0
@@ -114,27 +147,55 @@ function Platform:initClickables()
     platform.push1.numclicked = 0
     function platform.push1:clicked(button)
         if button == 1 then
-            platform.boarded_people = platform.boarded_people + math.min(1, platform.people[1])
-            platform.people[1] = math.max(0, platform.people[1] - 1)
+            local pushed = platform.lines[1]:pop()
+            if pushed == nil then
+                self.numclicked = 999
+            else
+                platform.boarded_people = platform.boarded_people + 1
+                platform.people[1] = platform.people[1] - 1
+                if platform.people[1] >= 10 then
+                    platform.lines[1]:push(Human:create())
+                end
+            end
         end
-        self.numclicked = button
     end
     function platform.push2:clicked(button)
         if button == 1 then
-        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[2])
-        platform.people[2] = math.max(0, platform.people[2] - 1)
+            local pushed = platform.lines[2]:pop()
+            if pushed == nil then
+            else
+                platform.boarded_people = platform.boarded_people + 1
+                platform.people[2] = platform.people[2] - 1
+                if platform.people[2] >= 10 then
+                    platform.lines[2]:push(Human:create())
+                end
+            end
         end
     end
     function platform.push3:clicked(button)
         if button == 1 then
-        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[3])
-        platform.people[3] = math.max(0, platform.people[3] - 1)
+            local pushed = platform.lines[3]:pop()
+            if pushed == nil then
+            else
+                platform.boarded_people = platform.boarded_people + 1
+                platform.people[3] = platform.people[3] - 1
+                if platform.people[3] >= 10 then
+                    platform.lines[3]:push(Human:create())
+                end
+            end
         end
     end
     function platform.push4:clicked(button)
         if button == 1 then
-        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[4])
-        platform.people[4] = math.max(0, platform.people[4] - 1)
+            local pushed = platform.lines[4]:pop()
+            if pushed == nil then
+            else
+                platform.boarded_people = platform.boarded_people + 1
+                platform.people[4] = platform.people[4] - 1
+                if platform.people[4] >= 10 then
+                    platform.lines[4]:push(Human:create())
+                end
+            end
         end
     end
     function platform.push1:draw()
