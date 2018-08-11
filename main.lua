@@ -1,13 +1,15 @@
+require "station"
+
 -- called once at startup, load resources here
 function love.load()
     love.window.setMode(1920, 1080)
 
     -- load images
-    shimbashi = love.graphics.newImage("images/shimbashi_subway.png")
-    platform = love.graphics.newImage("images/platform.png")
-    passenger = love.graphics.newImage("images/passenger.png")
-    train = love.graphics.newImage("images/train_wagon.png")
-    titel = love.graphics.newImage("images/titel.png")
+    g_shimbashi = love.graphics.newImage("images/shimbashi_subway.png")
+    g_platform = love.graphics.newImage("images/platform.png")
+    g_passenger = love.graphics.newImage("images/passenger.png")
+    g_wagon = love.graphics.newImage("images/train_wagon.png")
+    g_title = love.graphics.newImage("images/titel.png")
 
     love.graphics.setNewFont(46)
     love.graphics.setColor(0,0,0)
@@ -22,6 +24,10 @@ function love.load()
     tplatform = {}
     tdoor = {}
 
+    stations = {}
+    stations["shimbashi"] = Station:create("shimbashi", g_shimbashi)
+
+    current_station = "shimbashi"
 
 end
 
@@ -29,11 +35,13 @@ end
 function love.draw()
     love.graphics.setColor(255,255,255)
     if mode=="title" then
-        love.graphics.draw(titel)
+        love.graphics.draw(g_title)
     end
     --love.graphics.print("Hello World", 400, 300)
     --love.graphics.scale(1920, 1080)
     if mode == "game" then 
+        stations[current_station]:draw()
+        --[[
         pos = (wagon_num - 1) * 1920
         love.graphics.translate(-pos, 0)
         if level == "shimbashi" then
@@ -51,6 +59,7 @@ function love.draw()
         love.graphics.print("Money " .. yen, 1400+pos, 50)
         love.graphics.print("time", 1400+pos, 150)
         love.graphics.rectangle("fill", 1400+pos, 300, 500, 750)
+        ]]--
     end
 end
 
