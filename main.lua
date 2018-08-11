@@ -1,35 +1,80 @@
 -- called once at startup, load resources here
 function love.load()
     love.window.setMode(1920, 1080)
+
+    -- load images
     shimbashi = love.graphics.newImage("images/shimbashi_subway.png")
     platform = love.graphics.newImage("images/platform.png")
     passenger = love.graphics.newImage("images/passenger.png")
     train = love.graphics.newImage("images/train_wagon.png")
-    love.graphics.setNewFont(12)
+    titel = love.graphics.newImage("images/titel.png")
+
+    love.graphics.setNewFont(46)
     love.graphics.setColor(0,0,0)
     love.graphics.setBackgroundColor(255,255,255)
-    num = 0
+
+    -- initialize vars
+    mode = "title"
+    level ="shimbashi"
+    wagon_num = 1
+    yen = 0
+    tstation = {}
+    tplatform = {}
+    tdoor = {}
+
+
 end
 
 -- called continuously, drawing happens here
 function love.draw()
+    love.graphics.setColor(255,255,255)
+    if mode=="title" then
+        love.graphics.draw(titel)
+    end
     --love.graphics.print("Hello World", 400, 300)
     --love.graphics.scale(1920, 1080)
-    love.graphics.setColor(255,255,255)
-    love.graphics.draw(shimbashi)
-    love.graphics.draw(train, 500, 800)
-    love.graphics.draw(platform, 0, 0)
+    if mode == "game" then 
+        pos = (wagon_num - 1) * 1920
+        love.graphics.translate(-pos, 0)
+        if level == "shimbashi" then
+            for i = 1, 10 do
+                love.graphics.draw(shimbashi, (i-1) * 1920, 0)
+                love.graphics.draw(train, (i-1) * 1920 + 100, 300, 0, 2.5,2.5)
+                love.graphics.draw(platform, (i-1) * 1920, -1080, 0, 1, 2)
+            end
+        end
+        love.graphics.setColor(0,255,255)
+        love.graphics.rectangle("fill", 100+pos, 50, 800, 200)
+        love.graphics.setColor(0,0,255)
+        love.graphics.rectangle("fill", 950+pos, 50, 300, 200)
+        love.graphics.setColor(0,0,0)
+        love.graphics.print("Money " .. yen, 1400+pos, 50)
+        love.graphics.print("time", 1400+pos, 150)
+        love.graphics.rectangle("fill", 1400+pos, 300, 500, 750)
+    end
 end
 
 -- called continuously, do math here
 function love.update(dt)
-    if love.keyboard.isDown("up") then
-       num = num + 100 * dt -- this would increment num by 100 per second
-    end
- end
 
- function love.keypressed(key)
+end
+
+function love.keypressed(key)
     if key == "escape" then
         love.event.quit()
+    end
+
+    if mode == "title" and key == "return" then
+        mode = "game"
+    end
+
+    if mode == "game" then
+        if key == "left" then 
+            wagon_num = math.max(wagon_num - 1, 1)
+        end
+
+        if key == "right" then
+            wagon_num = math.min(wagon_num + 1, 10)
+        end
     end
 end
