@@ -22,7 +22,7 @@ function Platform:draw()
     love.graphics.draw(g_platform, (self.number-1) * g_platform:getWidth(), -g_platform:getHeight(), 0, 1, 2)
 
     if self.wagon_type == "normal" then
-        love.graphics.draw(g_wagon, (self.number-1) * (g_wagon:getWidth() * 2.5 + 10) + 100, 300, 0, 2.5, 2.5)
+        love.graphics.draw(g_wagon, (self.number-1) * (g_wagon:getWidth() * 2.5) + 100, 300, 0, 2.5, 2.5)
     end
 end
 

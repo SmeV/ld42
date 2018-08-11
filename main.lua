@@ -1,4 +1,6 @@
 require "station"
+require "gui"
+
 
 -- called once at startup, load resources here
 function love.load()
@@ -19,15 +21,10 @@ function love.load()
     mode = "title"
     level ="shimbashi"
     wagon_num = 1
-    yen = 0
-    tstation = {}
-    tplatform = {}
-    tdoor = {}
-
     stations = {}
     stations["shimbashi"] = Station:create("shimbashi", g_shimbashi)
-
     current_station = "shimbashi"
+    gui = Gui:create()
 
 end
 
@@ -40,7 +37,10 @@ function love.draw()
     --love.graphics.print("Hello World", 400, 300)
     --love.graphics.scale(1920, 1080)
     if mode == "game" then 
+        pos = (wagon_num - 1) * g_wagon:getWidth()*2.5
+        love.graphics.translate(-pos, 0)
         stations[current_station]:draw()
+        gui:draw()
         --[[
         pos = (wagon_num - 1) * 1920
         love.graphics.translate(-pos, 0)
