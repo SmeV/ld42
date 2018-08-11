@@ -13,8 +13,11 @@ function Station:create(name, graphic, modifier)
     station.halt_time = 10 
     station.wait_time = 10
     station.animation_time = 10
+    -- indicates people visiting this station eg shimbashi = 1, xx = 1.25, ...
     station.modifier = modifier
     station.num_people = 0
+    -- money made by this station for the last train
+    self.money = 0
     -- "empty" "entering" "stopping" "leaving"
     station.status = "entering"
     for i = 1, 10 do
@@ -51,6 +54,11 @@ function Station:update(dt)
     if self.status == "stopping" and self.timer >= self.halt_time then
         self.timer = 0
         self.status = "leaving"
+        for i, plat in pairs(self.platforms) do
+            plat.boarded_people = 0
+        end
+        self.money = self.boarded_people
+        self.boarded_people = 0
     end
 
     if self.status == "leaving" and self.timer >= self.animation_time then
@@ -59,11 +67,14 @@ function Station:update(dt)
     end
 
     passengers = 0
+    boarded = 0
     for i, plat in pairs(self.platforms) do
-        plat:update(dt, self.modifier)
+        plat:update(dt, self.modifier, self.status)
         passengers = passengers + plat.num_people
+        boarded = boarded + plat.boarded_people
     end
 
+    self.boarded_people = boarded
     self.num_people = passengers
 end
 

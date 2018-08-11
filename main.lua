@@ -29,7 +29,7 @@ function love.load()
     time_h = 5
     time_m = 0
     time_s = 5* 3600
-    yen = 0
+    money = 0
 
     all_buttons = {}
 
@@ -68,6 +68,8 @@ function love.draw()
         pos = (wagon_num - 1) * g_wagon:getWidth()*2.5
         love.graphics.translate(-pos, 0)
         stations[current_station]:draw()
+
+
         gui:draw(stations[current_station].platforms[wagon_num].num_people)
     end
 
@@ -85,6 +87,13 @@ function love.update(dt)
     time_m = math.floor(time_s/60) % 60 
     time_h = math.floor(time_s/3600) % 24
     stations[current_station]:update(dt)
+
+    cur_money = 0
+    for i, stat in pairs(stations) do
+        cur_money = cur_money + stat.money
+        stat.money = 0
+    end
+    money = money + cur_money 
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
