@@ -3,7 +3,7 @@ require "platform"
 Station = {}
 Station.__index = Station
 
-function Station:create(name, graphic)
+function Station:create(name, graphic, modifier)
     local station = {}
     setmetatable(station, Station)
     station.name = name
@@ -13,6 +13,7 @@ function Station:create(name, graphic)
     station.halt_time = 10 
     station.wait_time = 10
     station.animation_time = 10
+    station.modifier = modifier
     -- "empty" "entering" "stopping" "leaving"
     station.status = "entering"
     for i = 1, 10 do
@@ -30,8 +31,8 @@ function Station:draw()
     for i, plat in pairs(self.platforms) do
         plat:draw(self.status, animation_factor)
     end
-    love.graphics.print(self.timer, 1000,1000)
-    love.graphics.print(self.status, 1000, 800)
+   -- love.graphics.print(self.timer, 1000,1000)
+   -- love.graphics.print(self.status, 1000, 800)
 end
 
 function Station:update(dt)
@@ -39,7 +40,6 @@ function Station:update(dt)
     if  self.status == "empty" and self.timer >= self.wait_time then
         self.timer = 0
         self.status = "entering"
-        self:trainEnters()
     end
 
     if self.status == "entering" and self.timer >= self.animation_time then
@@ -50,19 +50,14 @@ function Station:update(dt)
     if self.status == "stopping" and self.timer >= self.halt_time then
         self.timer = 0
         self.status = "leaving"
-        self:trainLeaves()
     end
 
     if self.status == "leaving" and self.timer >= self.animation_time then
         self.timer = 0
         self.status = "empty"
     end
-end
 
-function Station:trainEnters()
-
-end
-
-function Station:trainLeaves()
-
+    for i, plat in pairs(self.platforms) do
+        plat:update(dt, self.modifier)
+    end
 end

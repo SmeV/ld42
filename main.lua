@@ -9,7 +9,7 @@ function love.load()
     -- load images
     g_shimbashi = love.graphics.newImage("images/shimbashi_subway.png")
     g_platform = love.graphics.newImage("images/platform.png")
-    g_passenger = love.graphics.newImage("images/passenger.png")
+    g_human = love.graphics.newImage("images/passenger.png")
     g_wagon = love.graphics.newImage("images/train_wagon.png")
     g_title = love.graphics.newImage("images/titel.png")
 
@@ -22,9 +22,13 @@ function love.load()
     level ="shimbashi"
     wagon_num = 1
     stations = {}
-    stations["shimbashi"] = Station:create("shimbashi", g_shimbashi)
+    stations["shimbashi"] = Station:create("shimbashi", g_shimbashi, 1)
     current_station = "shimbashi"
     gui = Gui:create()
+    time_h = 5
+    time_m = 0
+    time_s = 5* 3600
+    yen = 0
 
 end
 
@@ -65,6 +69,12 @@ end
 
 -- called continuously, do math here
 function love.update(dt)
+    time_s =  time_s + 288 * dt
+    if time_s >= 86400 then
+        time_s = 5 * 3600
+    end
+    time_m = math.floor(time_s/60) % 60 
+    time_h = math.floor(time_s/3600) % 24
     stations[current_station]:update(dt)
 end
 
