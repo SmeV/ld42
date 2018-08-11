@@ -21,54 +21,7 @@ function Platform:create(num)
     platform.boarding_multiplier = 1
     platform.boarded_people = 0
 
-    platform.push_buttons = {}
-    platform.push1 = Button:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 0 * 400, 300, (g_wagon:getWidth() / 4), 600)
-    platform.push2 = Button:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 1 * 400, 300, (g_wagon:getWidth() / 4), 600)
-    platform.push3 = Button:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 2 * 400, 300, (g_wagon:getWidth() / 4), 600)
-    platform.push4 = Button:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 3 * 400, 300, (g_wagon:getWidth() / 4), 600)
-    platform.push1.clicked = 0
-    function platform.push1:buttonPressed()
-        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[1])
-        platform.people[1] = math.max(0, platform.people[1] - 1)
-    end
-    function platform.push2:buttonPressed()
-        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[2])
-        platform.people[2] = math.max(0, platform.people[2] - 1)
-    end
-    function platform.push3:buttonPressed()
-        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[3])
-        platform.people[3] = math.max(0, platform.people[3] - 1)
-    end
-    function platform.push4:buttonPressed()
-        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[4])
-        platform.people[4] = math.max(0, platform.people[4] - 1)
-    end
-    function platform.push1:draw()
-        oldr, oldg, oldb = love.graphics.getColor()
-        if self.hovered then
-            love.graphics.setColor(255, 0, 0)
-        else
-            love.graphics.setColor(0, 0, 255)
-        end
-        love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
-        love.graphics.print(self.clicked, self.x + self.width / 2, self.y + self.height/2)
-        love.graphics.print(platform.people[1], self.x + self.width / 2, self.y + self.height/2 + 50)
-        love.graphics.setColor(oldr, oldg, oldb)
-    end
-    function platform.push2:draw()
-        oldr, oldg, oldb = love.graphics.getColor()
-        if self.hovered then
-            love.graphics.setColor(255, 0, 0)
-        else
-            love.graphics.setColor(0, 255, 255)
-        end
-        love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
-        love.graphics.setColor(oldr, oldg, oldb)
-    end
-    table.insert(platform.push_buttons, platform.push1)
-    table.insert(platform.push_buttons, platform.push2)
-    table.insert(platform.push_buttons, platform.push3)
-    table.insert(platform.push_buttons, platform.push4)
+    platform:initClickables()
 
     return platform
 end
@@ -99,8 +52,8 @@ function Platform:draw(status, animate_factor)
     end
 
 --    love.graphics.print(self.people[4]+self.people[1]+self.people[2]+self.people[3], 1000*(self.number-1),1000)
-    for i, button in pairs(self.push_buttons) do
-        button:draw()
+    for i, clickable in pairs(self.push_clickables) do
+        clickable:draw()
     end
 end
 
@@ -140,13 +93,74 @@ function Platform:update(dt, modifier, status)
 end
 
 function Platform:mousemoved(x, y, dx, dy, istouch)
-    for i, button in pairs(self.push_buttons) do
-        button:mousemoved(x, y, dx, dy, istouch)
+    for i, clickable in pairs(self.push_clickables) do
+        clickable:mousemoved(x, y, dx, dy, istouch)
     end
 end
 
 function Platform:mousepressed(x, y, button, istouch, presses)
-    for i, button in pairs(self.push_buttons) do
-        button:mousepressed(x, y, button, istouch, presses)
+    for i, clickable in pairs(self.push_clickables) do
+        clickable:mousepressed(x, y, button, istouch, presses)
     end
+end
+
+function Platform:initClickables()
+    local platform = self
+    platform.push_clickables = {}
+    platform.push1 = Clickable:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 0 * 400, 300, (g_wagon:getWidth() / 4), 600)
+    platform.push2 = Clickable:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 1 * 400, 300, (g_wagon:getWidth() / 4), 600)
+    platform.push3 = Clickable:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 2 * 400, 300, (g_wagon:getWidth() / 4), 600)
+    platform.push4 = Clickable:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 3 * 400, 300, (g_wagon:getWidth() / 4), 600)
+    platform.push1.numclicked = 0
+    function platform.push1:clicked(button)
+        if button == 1 then
+            platform.boarded_people = platform.boarded_people + math.min(1, platform.people[1])
+            platform.people[1] = math.max(0, platform.people[1] - 1)
+        end
+        self.numclicked = button
+    end
+    function platform.push2:clicked(button)
+        if button == 1 then
+        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[2])
+        platform.people[2] = math.max(0, platform.people[2] - 1)
+        end
+    end
+    function platform.push3:clicked(button)
+        if button == 1 then
+        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[3])
+        platform.people[3] = math.max(0, platform.people[3] - 1)
+        end
+    end
+    function platform.push4:clicked(button)
+        if button == 1 then
+        platform.boarded_people = platform.boarded_people + math.min(1, platform.people[4])
+        platform.people[4] = math.max(0, platform.people[4] - 1)
+        end
+    end
+    function platform.push1:draw()
+        oldr, oldg, oldb = love.graphics.getColor()
+        if self.hovered then
+            love.graphics.setColor(255, 0, 0)
+        else
+            love.graphics.setColor(0, 0, 255)
+        end
+        love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
+        love.graphics.print(self.numclicked, self.x + self.width / 2, self.y + self.height/2)
+        love.graphics.print(platform.people[1], self.x + self.width / 2, self.y + self.height/2 + 50)
+        love.graphics.setColor(oldr, oldg, oldb)
+    end
+    function platform.push2:draw()
+        oldr, oldg, oldb = love.graphics.getColor()
+        if self.hovered then
+            love.graphics.setColor(255, 0, 0)
+        else
+            love.graphics.setColor(0, 255, 255)
+        end
+        love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
+        love.graphics.setColor(oldr, oldg, oldb)
+    end
+    table.insert(platform.push_clickables, platform.push1)
+    table.insert(platform.push_clickables, platform.push2)
+    table.insert(platform.push_clickables, platform.push3)
+    table.insert(platform.push_clickables, platform.push4)
 end
