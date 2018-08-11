@@ -12,9 +12,11 @@ function Platform:create(num)
     table.insert(platform.people, 0)
     table.insert(platform.people, 0)
 
+    platform.num_people = 0
     platform.wagon_type = "none"
     platform.wagon_type = "normal"
     platform.custom_dt = 0
+    platform.boarding_multiplier = 1
 
     return platform
 end
@@ -44,17 +46,33 @@ function Platform:draw(status, animate_factor)
         end
     end
 
-    love.graphics.print(self.people[4]+self.people[1]+self.people[2]+self.people[3], 1000*(self.number-1),1000)
+--    love.graphics.print(self.people[4]+self.people[1]+self.people[2]+self.people[3], 1000*(self.number-1),1000)
 end
 
 function Platform:update(dt, modifier)
     self.custom_dt = self.custom_dt + dt
     if self.custom_dt > 1 then
         for i = 1, 4 do
-            if time_s < 9 * 3600 then
-                 self.people[i] = self.people[i] + (time_h - 4) * modifier * math.random(50, 100) / 40 * self.custom_dt
+            self.people[i] = math.max(self.people[i]-1*self.boarding_multiplier,0)
+
+            if time_s <= 9 * 3600 then
+                 self.people[i] = self.people[i] + math.floor((time_h - 4) * modifier * math.random(50, 100) / 40 * self.custom_dt)
+            end
+
+            if time_s > 9 *3600 and time_s <= 14 * 3600 then
+                self.people[i] = self.people[i] + math.floor((15 - time_h) * modifier * math.random(10, 50) / 40 * self.custom_dt)
+            end
+
+            if time_s > 14 *3600 and time_s <= 21 * 3600 then
+                self.people[i] = self.people[i] + math.floor((time_h - 13) * modifier * math.random(30, 80) / 40 * self.custom_dt)
+            end
+
+            if time_s > 21 *3600 and time_s <= 24 * 3600 then
+                self.people[i] = self.people[i] + math.floor((25 - time_h) * modifier * math.random(30, 80) / 40 * self.custom_dt)
             end
         end
         self.custom_dt = 0
+
+        self.num_people = self.people[4]+self.people[1]+self.people[2]+self.people[3]
     end
 end

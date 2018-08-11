@@ -14,6 +14,7 @@ function Station:create(name, graphic, modifier)
     station.wait_time = 10
     station.animation_time = 10
     station.modifier = modifier
+    station.num_people = 0
     -- "empty" "entering" "stopping" "leaving"
     station.status = "entering"
     for i = 1, 10 do
@@ -57,7 +58,11 @@ function Station:update(dt)
         self.status = "empty"
     end
 
+    passengers = 0
     for i, plat in pairs(self.platforms) do
         plat:update(dt, self.modifier)
+        passengers = passengers + plat.num_people
     end
+
+    self.num_people = passengers
 end

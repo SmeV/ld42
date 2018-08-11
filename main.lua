@@ -44,7 +44,7 @@ function love.draw()
         pos = (wagon_num - 1) * g_wagon:getWidth()*2.5
         love.graphics.translate(-pos, 0)
         stations[current_station]:draw()
-        gui:draw()
+        gui:draw(stations[current_station].platforms[wagon_num].num_people)
         --[[
         pos = (wagon_num - 1) * 1920
         love.graphics.translate(-pos, 0)
