@@ -17,6 +17,7 @@ function Platform:create(num)
     platform.wagon_type = "normal"
     platform.custom_dt = 0
     platform.boarding_multiplier = 1
+    platform.boarded_people = 0
 
     return platform
 end
@@ -49,14 +50,21 @@ function Platform:draw(status, animate_factor)
 --    love.graphics.print(self.people[4]+self.people[1]+self.people[2]+self.people[3], 1000*(self.number-1),1000)
 end
 
-function Platform:update(dt, modifier)
+function Platform:update(dt, modifier, status)
     self.custom_dt = self.custom_dt + dt
     if self.custom_dt > 1 then
         for i = 1, 4 do
-            self.people[i] = math.max(self.people[i]-1*self.boarding_multiplier,0)
+            if status == "stopping" then
+                self.boarded_people = self.boarded_people + math.max(self.people[i]-1*self.boarding_multiplier,0)
+                self.people[i] = math.max(self.people[i]-1*self.boarding_multiplier,0)
+            end
 
-            if time_s <= 9 * 3600 then
-                 self.people[i] = self.people[i] + math.floor((time_h - 4) * modifier * math.random(50, 100) / 40 * self.custom_dt)
+            if time_s >= 5*3600 and time_s <= 5.5 * 3600 then
+                self.people[i] = self.people[i] + math.random(0, 1)
+            end
+
+            if time_s > 5.5 *3600 and time_s <= 9 * 3600 then
+                self.people[i] = self.people[i] + math.floor((time_h - 4) * modifier * math.random(50, 100) / 40 * self.custom_dt)
             end
 
             if time_s > 9 *3600 and time_s <= 14 * 3600 then
