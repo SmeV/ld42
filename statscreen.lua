@@ -4,7 +4,7 @@ StatScreen = {}
 StatScreen.__index = StatScreen
 
 function StatScreen:create(title, stats)
-    statscreen = {}
+    local statscreen = {}
     setmetatable(statscreen, StatScreen)
     statscreen.title = title
     statscreen.stats = stats

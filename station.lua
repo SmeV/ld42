@@ -36,9 +36,9 @@ function Station:create(name, graphic, modifier)
     station.statsDaily["perfectlyBoardedTrains"] = 0
     station.statsDaily["money"] = 0
 
-    station.abilityLevels = {}
-    station.abilityLevels["frequency"] = 0
-    station.abilityLevels["campaign"] = 0
+    station.abilities = {}
+    station.abilities["frequency"] = Ability:create("Frequency")
+    station.abilities["campaign"] = Ability:create("Campaign")
 
     -- "empty" "entering" "stopping" "leaving"
     station.status = "entering"

@@ -1,6 +1,7 @@
 require "button"
 require "waitingline"
 require "human"
+require "ability"
 
 Platform = {}
 Platform.__index = Platform
@@ -31,11 +32,8 @@ function Platform:create(num)
     platform.multiplier["woman"] = 2.0
     platform.multiplier["lowac"] = 3.0
 
-    platform.abilityLevels = {}
-    platform.abilityLevels["boardingSpeed"] = 0
-    platform.abilityLevels["maxBoarding"] = 0
-    platform.abilityLevels["employees"] = 0
-    platform.abilityLevels["fence"] = 0
+    platform.abilities = {}
+    platform:initAbilities()
 
     platform.wagon = {}
     platform.wagon["size"] = 100
@@ -54,7 +52,9 @@ function Platform:create(num)
         platform.wagon["type"] = "lowac"
     end
 
-    platform.boarding_multiplier = 1 
+    platform.employees = 0
+    platform.boardingTimeNeeded = 1.0
+    platform.boardingTimer = 0.0
     platform.autoBoardingMax = 0.5
     platform.pushPowerNeeded = 1.0
     platform.currentPower = 0.0
@@ -156,14 +156,21 @@ end
 
 function Platform:update(dt, modifier, status)
     self.custom_dt = self.custom_dt + dt
+    self.boardingTimer = self.boardingTimer + dt
     if self.custom_dt > 1 then
-        self:autoBoarding(status)
         self:peopleAdded(modifier)
         self:refillLines()
+        self:employeesPush()
         self.custom_dt = 0
 
         self.num_people = self.people[4]+self.people[1]+self.people[2]+self.people[3]
     end
+
+    if self.boardingTimer >= self.boardingTimeNeeded then
+        self:autoBoarding()
+        self.boardingTimer = 0.0
+    end
+
     if status ~= "stopping" then
         self.wagon["fillStatus"] = 0.0
     end
@@ -209,12 +216,20 @@ function Platform:refillLines()
     end
 end
 
+function Platform:employeesPush()
+    if self.wagon["status"] == "stopping" then
+        for i = 1,self.employees do
+            local rngPos = math.random(4)
+            self:personPushed(rngPos, 1.0)
+        end
+    end
+end
 
 function Platform:autoBoarding()
     if self.wagon["status"] == "stopping"  then
         for i = 1, 4 do
             if self.wagon["fillStatus"] < self.autoBoardingMax and self.people[i] > 0 then
-                self:personPushed(i, 1)
+                self:personPushed(i, 1.0)
             end
         end
     end
@@ -277,6 +292,32 @@ function Platform:mousepressed(x, y, button, istouch, presses)
     for i, clickable in pairs(self.push_clickables) do
         clickable:mousepressed(x, y, button, istouch, presses)
     end
+end
+
+function Platform:initAbilities()
+    local platform = self
+    platform.speedboardingAbility = Ability:create("Speedboarding", "")
+    platform.maxboardingAbility = Ability:create("Autoboarding", "")
+    platform.employeesAbility = Ability:create("Employees", "")
+    platform.fencesAbility = Ability:create("Fences", "")
+    platform.abilities["boardingSpeed"] = platform.speedboardingAbility
+    platform.abilities["maxBoarding"] = platform.maxboardingAbility
+    platform.abilities["employees"] = platform.employeesAbility
+    platform.abilities["fence"] = platform.fencesAbility
+
+    function platform.speedboardingAbility:upgraded()
+        platform.boardingTimeNeeded = math.pow(0.95, self.level)
+    end
+    function platform.maxboardingAbility:upgraded()
+        platform.autoBoardingMax = 0.5 + 0.5 * math.pow(0.9, self.level)
+    end
+    function platform.employeesAbility:upgraded()
+        platform.employees = self.level
+    end
+    function platform.fencesAbility:upgraded()
+        platform.powerSaver = 1.0 - math.pow(0.95, self.level)
+    end
+
 end
 
 function Platform:initClickables()

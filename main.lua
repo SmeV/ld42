@@ -40,8 +40,11 @@ function love.load()
     time_h = 5
     time_m = 0
     time_s = 5* 3600
-    money = 0
+    money = 1000
     pos = 0
+
+    globalAbilityLevels = {}
+    globalAbilityLevels["Push"] = 0
 
     statistics = StatScreen:create(current_station, stations[current_station].stats)
     --statistics:changeAnimationStatus("bla")
