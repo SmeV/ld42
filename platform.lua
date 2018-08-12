@@ -29,6 +29,11 @@ function Platform:create(num)
     platform.boarding_multiplier = 1
     platform.boarded_people = 0
 
+    platform.wagonSize = 100
+    platform.wagonFillStatus = 0.0
+    platform.autoBoardingMax = 0.6
+    platform.pushPowerNeeded = 1.0
+
     platform:initClickables()
 
     return platform
@@ -52,15 +57,6 @@ function Platform:draw(status, animate_factor)
         end
     end
 
-    --humans
-    --[[
-    for i, human in pairs(self.people) do
-        for j = 1, math.min(10,human) do
-            love.graphics.draw(g_human, ((self.number-1)*4 +i) * g_wagon:getWidth()*2.5/4 - 50, g_platform:getHeight() * 0.6 + (j * 2.5 * math.min(10,human)), 0, 2.5, 2.5)
-        end
-    end
-    ]]--
-
 --    love.graphics.print(self.people[4]+self.people[1]+self.people[2]+self.people[3], 1000*(self.number-1),1000)
     for i, clickable in pairs(self.push_clickables) do
         clickable:draw()
@@ -73,14 +69,8 @@ end
 function Platform:update(dt, modifier, status)
     self.custom_dt = self.custom_dt + dt
     if self.custom_dt > 1 then
+        self:autoBoarding(status)
         for i = 1, 4 do
-            if status == "stopping" then
-                self.boarded_people = self.boarded_people + math.min(1, self.people[i]) * self.boarding_multiplier
-                self.people[i] = math.max(self.people[i]-1*self.boarding_multiplier,0)
-                while self.lines[i]:getSize() < 10 and self.lines[i]:getSize() < self.people[i] do
-                    self.lines[i]:push(Human:create())
-                end
-            end
 
             if time_s >= 5*3600 and time_s <= 5.5 * 3600 then
                 self.people[i] = self.people[i] + math.random(0, 1)
@@ -125,6 +115,29 @@ function Platform:update(dt, modifier, status)
     end
 end
 
+function Platform:autoBoarding(status)
+    if status == "stopping"  then
+        for i = 1, 4 do
+            if self.wagonFillStatus < self.autoBoardingMax and self.people[i] > 0 then
+                self:personPushed(i)
+            end
+        end
+    end
+end
+
+function Platform:personPushed(i)
+    local pushed = self.lines[i]:pop()
+    if pushed == nil then
+    else
+        self.boarded_people = self.boarded_people + 1
+        self.people[i] = self.people[i] - 1
+        if self.people[i] > self.lines[i]:getSize() then
+            self.lines[i]:push(Human:create())
+        end
+        self.wagonFillStatus = self.wagonFillStatus + 1.0 / self.wagonSize
+    end
+end
+
 function Platform:mousemoved(x, y, dx, dy, istouch)
     for i, clickable in pairs(self.push_clickables) do
         clickable:mousemoved(x, y, dx, dy, istouch)
@@ -147,55 +160,22 @@ function Platform:initClickables()
     platform.push1.numclicked = 0
     function platform.push1:clicked(button)
         if button == 1 then
-            local pushed = platform.lines[1]:pop()
-            if pushed == nil then
-                self.numclicked = 999
-            else
-                platform.boarded_people = platform.boarded_people + 1
-                platform.people[1] = platform.people[1] - 1
-                if platform.people[1] >= 10 then
-                    platform.lines[1]:push(Human:create())
-                end
-            end
+            platform:personPushed(1)
         end
     end
     function platform.push2:clicked(button)
         if button == 1 then
-            local pushed = platform.lines[2]:pop()
-            if pushed == nil then
-            else
-                platform.boarded_people = platform.boarded_people + 1
-                platform.people[2] = platform.people[2] - 1
-                if platform.people[2] >= 10 then
-                    platform.lines[2]:push(Human:create())
-                end
-            end
+            platform:personPushed(2)
         end
     end
     function platform.push3:clicked(button)
         if button == 1 then
-            local pushed = platform.lines[3]:pop()
-            if pushed == nil then
-            else
-                platform.boarded_people = platform.boarded_people + 1
-                platform.people[3] = platform.people[3] - 1
-                if platform.people[3] >= 10 then
-                    platform.lines[3]:push(Human:create())
-                end
-            end
+            platform:personPushed(3)
         end
     end
     function platform.push4:clicked(button)
         if button == 1 then
-            local pushed = platform.lines[4]:pop()
-            if pushed == nil then
-            else
-                platform.boarded_people = platform.boarded_people + 1
-                platform.people[4] = platform.people[4] - 1
-                if platform.people[4] >= 10 then
-                    platform.lines[4]:push(Human:create())
-                end
-            end
+            platform:personPushed(4)
         end
     end
     function platform.push1:draw()
