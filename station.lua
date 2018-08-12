@@ -80,19 +80,19 @@ function Station:update(dt)
 end
 
 function Station:mousemoved(x, y, dx, dy, istouch)
-    for i, platform in pairs(self.platforms) do
-        platform:mousemoved(x, y, dx, dy, istouch)
-    end
+    self.platforms[wagon_num]:mousemoved(x, y, dx, dy, istouch)
 end
 
 function Station:mousepressed(x, y, button, istouch, presses)
-    for i, platform in pairs(self.platforms) do
-        platform:mousepressed(x, y, button, istouch, presses)
-    end
+    self.platforms[wagon_num]:mousepressed(x, y, button, istouch, presses)
 end
 
 function Station:dayEnd()
-    station.stats = {}
+    for i, platform in pairs(self.platforms) do
+        platform:dayEnd()
+        self.statsDaily["peopleKilled"] = self.statsDaily["peopleKilled"] + platform.statsDaily["peopleKilled"]
+    end
+
     self.stats["pushedPeople"] = self.stats["pushedPeople"] + self.statsDaily["pushedPeople"]
     self.stats["boardedPeople"] = self.stats["boardedPeople"] + self.statsDaily["boardedPeople"]
     self.stats["wronglyBoarded"] = self.stats["wronglyBoarded"] + self.statsDaily["wronglyBoarded"]
@@ -100,9 +100,19 @@ function Station:dayEnd()
     self.stats["perfectlyBoardedWagon"] = self.stats["perfectlyBoardedWagon"] + self.statsDaily["perfectlyBoardedWagon"]
     self.stats["perfectlyBoardedTrains"] = self.stats["perfectlyBoardedTrains"] + self.statsDaily["perfectlyBoardedTrains"]
     self.stats["money"] = self.stats["money"] + self.statsDaily["money"]
+
+    -- reduce money for killed people today!
+    money = money - self.statsDaily["peopleKilled"] * 1000
+
+    -- bonus money for perfectly boarded trains!
+    money = money + self.statsDaily["perfectlyBoardedTrains"] * 10000
 end
 
 function Station:newDay()
+    for i, platform in pairs(self.platforms) do
+        platform:newDay()
+    end
+
     self.statsDaily["pushedPeople"] = 0
     self.statsDaily["boardedPeople"] = 0
     self.statsDaily["wronglyBoarded"] = 0
@@ -114,13 +124,21 @@ end
 
 function Station:evalTrain()
     local newMoney = 0
+    local wronglyBoarded = 0
     for i, platform in pairs(self.platforms) do
         self.statsDaily["pushedPeople"] = self.statsDaily["pushedPeople"] + platform.wagon["pushedPeople"]
         self.statsDaily["boardedPeople"] = self.statsDaily["boardedPeople"] + platform.wagon["boardedPeople"]
         self.statsDaily["wronglyBoarded"] = self.statsDaily["wronglyBoarded"] + platform.wagon["wronglyBoarded"]
+        if platform.wagon["wronglyBoarded"] == 0 then
+            self.statsDaily["perfectlyBoardedWagon"] = self.statsDaily["perfectlyBoardedWagon"] + 1
+        end
 
+        wronglyBoarded = wronglyBoarded + platform.wagon["wronglyBoarded"]
         newMoney = newMoney + platform:evalWagon()
     end 
+    if wronglyBoarded == 0 then
+        self.statsDaily["perfectlyBoardedTrains"] = self.statsDaily["perfectlyBoardedTrains"] + 1
+    end
 
     -- update global money
     money = money + newMoney

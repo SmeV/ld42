@@ -238,9 +238,11 @@ function Platform:personPushed(i, power)
 end
 
 function Platform:evalStats(person)
-    if self.wagon_type == "woman" and person.gender == "male" then
+    if not self.wagon["status"] == "stopping" then
+        self.statsDaily["peopleKilled"] = self.statsDaily["peopleKilled"] + 1
+    elseif self.wagon["type"] == "woman" and person.gender == "male" then
         self.wagon["wronglyBoarded"] = self.wagon["wronglyBoarded"] + 1
-    elseif self.wagon_type == "lowac" and not person.type == "tourist" then
+    elseif self.wagon["type"] == "lowac" and not person.type == "tourist" then
         self.wagon["wronglyBoarded"] = self.wagon["wronglyBoarded"] + 1
     end
     self.wagon["boardedPeople"] = self.wagon["boardedPeople"] + 1
@@ -275,10 +277,10 @@ end
 function Platform:initClickables()
     local platform = self
     platform.push_clickables = {}
-    platform.push1 = Clickable:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 0 * 400, 300, (g_wagon:getWidth() / 4), 600)
-    platform.push2 = Clickable:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 1 * 400, 300, (g_wagon:getWidth() / 4), 600)
-    platform.push3 = Clickable:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 2 * 400, 300, (g_wagon:getWidth() / 4), 600)
-    platform.push4 = Clickable:create((platform.number-1) * (g_wagon:getWidth() * 2.5) + 100 + 3 * 400, 300, (g_wagon:getWidth() / 4), 600)
+    platform.push1 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 100 + 0 * 400, 300, (g_wagon:getWidth() / 4), 600)
+    platform.push2 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 100 + 1 * 400, 300, (g_wagon:getWidth() / 4), 600)
+    platform.push3 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 100 + 2 * 400, 300, (g_wagon:getWidth() / 4), 600)
+    platform.push4 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 100 + 3 * 400, 300, (g_wagon:getWidth() / 4), 600)
     platform.push1.numclicked = 0
     function platform.push1:clicked(button)
         if button == 1 then

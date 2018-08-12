@@ -5,7 +5,7 @@ require "button"
 
 -- called once at startup, load resources here
 function love.load()
-    love.window.setMode(1920, 1080)
+    love.window.setMode(1920, 1080, {vsync=true})
 
     -- load images
     g_shimbashi = love.graphics.newImage("images/shimbashi_subway.png")
