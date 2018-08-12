@@ -17,13 +17,22 @@ function Platform:create(num)
     table.insert(platform.people, 0)
 
     platform.lines = {}
+    platform.lineSize = 5
     table.insert(platform.lines, WaitingLine:create())
     table.insert(platform.lines, WaitingLine:create())
     table.insert(platform.lines, WaitingLine:create())
     table.insert(platform.lines, WaitingLine:create())
+    table.insert(platform.lines, WaitingLine:create())
+    table.insert(platform.lines, WaitingLine:create())
+    table.insert(platform.lines, WaitingLine:create())
+    table.insert(platform.lines, WaitingLine:create())
+    platform.doormodulos = {}
+    table.insert(platform.doormodulos, 0)
+    table.insert(platform.doormodulos, 0)
+    table.insert(platform.doormodulos, 0)
+    table.insert(platform.doormodulos, 0)
 
     platform.num_people = 0
-    platform.wagon_type = "none"
     platform.wagon_type = "normal"
     platform.custom_dt = 0
     platform.boarding_multiplier = 1
@@ -31,8 +40,9 @@ function Platform:create(num)
 
     platform.wagonSize = 100
     platform.wagonFillStatus = 0.0
-    platform.autoBoardingMax = 0.6
+    platform.autoBoardingMax = 0.1
     platform.pushPowerNeeded = 1.0
+    platform.currentPower = 0.0
 
     platform:initClickables()
 
@@ -69,7 +79,7 @@ function Platform:draw(status, animate_factor)
 
     -- draw humans
     for i, line in pairs(self.lines) do
-        line:draw(((self.number-1)*4 + i) * g_wagon:getWidth()/4 - 50, g_platform:getHeight() * 0.68)
+        line:draw(((self.number-1)*4 + math.ceil(i/2)) * g_wagon:getWidth()/4 - 75 + i%2 * 100, g_platform:getHeight() * 0.68)
     end
     
     -- Minimap of current station
@@ -113,71 +123,84 @@ function Platform:update(dt, modifier, status)
     self.custom_dt = self.custom_dt + dt
     if self.custom_dt > 1 then
         self:autoBoarding(status)
-        for i = 1, 4 do
-
-            if time_s >= 5*3600 and time_s <= 5.5 * 3600 then
-                self.people[i] = self.people[i] + math.random(0, 1)
-                while self.lines[i]:getSize() < 10 and self.lines[i]:getSize() < self.people[i] do
-                    self.lines[i]:push(Human:create())
-                end
-            end
-
-            if time_s > 5.5 *3600 and time_s <= 9 * 3600 then
-                self.people[i] = self.people[i] + math.floor((time_h - 4) * modifier * math.random(50, 100) / 40 * self.custom_dt)
-                while self.lines[i]:getSize() < 10 and self.lines[i]:getSize() < self.people[i] do
-                    self.lines[i]:push(Human:create())
-                end
-            end
-
-            if time_s > 9 *3600 and time_s <= 14 * 3600 then
-                self.people[i] = self.people[i] + math.floor((15 - time_h) * modifier * math.random(10, 50) / 40 * self.custom_dt)
-                while self.lines[i]:getSize() < 10 and self.lines[i]:getSize() < self.people[i] do
-                    self.lines[i]:push(Human:create())
-                end
-            end
-
-            if time_s > 14 *3600 and time_s <= 21 * 3600 then
-                self.people[i] = self.people[i] + math.floor((time_h - 13) * modifier * math.random(30, 80) / 40 * self.custom_dt)
-                while self.lines[i]:getSize() < 10 and self.people[i] > 0 do
-                    self.lines[i]:push(Human:create())
-                    self.people[i] = self.people[i] - 1
-                end
-            end
-
-            if time_s > 21 *3600 and time_s <= 24 * 3600 then
-                self.people[i] = self.people[i] + math.floor((25 - time_h) * modifier * math.random(30, 80) / 40 * self.custom_dt)
-                while self.lines[i]:getSize() < 10 and self.people[i] > 0 do
-                    self.lines[i]:push(Human:create())
-                    self.people[i] = self.people[i] - 1
-                end
-            end
-        end
+        self:peopleAdded(modifier)
+        self:refillLines()
         self.custom_dt = 0
 
         self.num_people = self.people[4]+self.people[1]+self.people[2]+self.people[3]
     end
+    if self.wagonFillStatus > 0.1 then
+        self.pushPowerNeeded = 3.0
+    end
 end
+
+function Platform:peopleAdded(modifier)
+    for i = 1, 4 do
+
+        if time_s >= 5*3600 and time_s <= 5.5 * 3600 then
+            self.people[i] = self.people[i] + math.random(0, 1)
+        end
+
+        if time_s > 5.5 *3600 and time_s <= 9 * 3600 then
+            self.people[i] = self.people[i] + math.floor((time_h - 4) * modifier * math.random(50, 100) / 40 * self.custom_dt)
+        end
+
+        if time_s > 9 *3600 and time_s <= 14 * 3600 then
+            self.people[i] = self.people[i] + math.floor((15 - time_h) * modifier * math.random(10, 50) / 40 * self.custom_dt)
+        end
+
+        if time_s > 14 *3600 and time_s <= 21 * 3600 then
+            self.people[i] = self.people[i] + math.floor((time_h - 13) * modifier * math.random(30, 80) / 40 * self.custom_dt)
+        end
+
+        if time_s > 21 *3600 and time_s <= 24 * 3600 then
+            self.people[i] = self.people[i] + math.floor((25 - time_h) * modifier * math.random(30, 80) / 40 * self.custom_dt)
+        end
+    end
+end
+
+function Platform:refillLines()
+    for i = 1,4 do
+        local combinedSize = self.lines[i*2 + 0]:getSize() + self.lines[i*2 - 1]:getSize()
+        while combinedSize < 10 and combinedSize < self.people[i] do
+            if self.lines[i*2 + 0]:getSize() <= self.lines[i*2 - 1]:getSize() then
+                self.lines[i*2 + 0]:push(Human:create())
+            else
+                self.lines[i*2 - 1]:push(Human:create())
+            end
+            combinedSize = combinedSize + 1
+        end
+    end
+end
+
 
 function Platform:autoBoarding(status)
     if status == "stopping"  then
         for i = 1, 4 do
             if self.wagonFillStatus < self.autoBoardingMax and self.people[i] > 0 then
-                self:personPushed(i)
+                self:personPushed(i, 1)
             end
         end
     end
 end
 
-function Platform:personPushed(i)
-    local pushed = self.lines[i]:pop()
+function Platform:personPushed(i, power)
+    local pushed = self.lines[i * 2 - self.doormodulos[i] % 2]:pop()
     if pushed == nil then
+        self.doormodulos[i] = self.doormodulos[i] % 2 + 1
     else
-        self.boarded_people = self.boarded_people + 1
-        self.people[i] = self.people[i] - 1
-        if self.people[i] > self.lines[i]:getSize() then
-            self.lines[i]:push(Human:create())
+        self.currentPower = self.currentPower + power
+        if self.currentPower >= self.pushPowerNeeded then
+            local combinedSize = self.lines[i*2 + 0]:getSize() + self.lines[i*2 - 1]:getSize()
+            self.boarded_people = self.boarded_people + 1
+            self.people[i] = self.people[i] - 1
+            if self.people[i] > combinedSize then
+                self.lines[i * 2 - self.doormodulos[i] % 2]:push(Human:create())
+            end
+            self.wagonFillStatus = self.wagonFillStatus + 1.0 / self.wagonSize
+            self.currentPower = 0
+            self.doormodulos[i] = self.doormodulos[i] % 2 + 1
         end
-        self.wagonFillStatus = self.wagonFillStatus + 1.0 / self.wagonSize
     end
 end
 
@@ -203,22 +226,22 @@ function Platform:initClickables()
     platform.push1.numclicked = 0
     function platform.push1:clicked(button)
         if button == 1 then
-            platform:personPushed(1)
+            platform:personPushed(1,1)
         end
     end
     function platform.push2:clicked(button)
         if button == 1 then
-            platform:personPushed(2)
+            platform:personPushed(2,1)
         end
     end
     function platform.push3:clicked(button)
         if button == 1 then
-            platform:personPushed(3)
+            platform:personPushed(3,1)
         end
     end
     function platform.push4:clicked(button)
         if button == 1 then
-            platform:personPushed(4)
+            platform:personPushed(4,1)
         end
     end
     function platform.push1:draw()
