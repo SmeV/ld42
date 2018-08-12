@@ -108,16 +108,10 @@ function Platform:draw(animate_factor)
     -- train animation
     if self.wagon["status"] == "leaving" then
         love.graphics.draw(self.wagon["graphics"], (self.number-1) * (g_wagon:getWidth()) + 100 - animate_factor, 300)
-        love.graphics.draw(self.wagon["graphics"], pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
     elseif self.wagon["status"] == "entering" then
         love.graphics.draw(self.wagon["graphics"], (self.number-1) * g_wagon:getWidth() + 100 + g_platform:getWidth()*10 - animate_factor, 300)
-        love.graphics.draw(self.wagon["graphics"], pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
     elseif self.wagon["status"] == "stopping" then
         love.graphics.draw(self.wagon["graphics"], (self.number-1) * g_wagon:getWidth() + 100, 300)
-        love.graphics.setColor(255,0,0)
-        love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 100)
-        love.graphics.setColor(oldr, oldg, oldb)
-        love.graphics.draw(self.wagon["graphics"], pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
     end
 
 
@@ -132,6 +126,7 @@ function Platform:draw(animate_factor)
     end
     
     -- Minimap of current station
+    love.graphics.push()
     love.graphics.setScissor(50, 50, 1000, 200)
     love.graphics.draw(g_platform, pos + (self.number-1) * g_platform:getWidth() * s +50, 150, 0, s, s)
     love.graphics.setColor(255,0,0)
@@ -143,8 +138,18 @@ function Platform:draw(animate_factor)
         love.graphics.rectangle("line", pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 150)
         love.graphics.setColor(oldr, oldg, oldb)
     end
-
+    if self.wagon["status"] == "leaving" then
+        love.graphics.draw(self.wagon["graphics"], pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
+    elseif self.wagon["status"] == "entering" then
+        love.graphics.draw(self.wagon["graphics"], pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
+    elseif self.wagon["status"] == "stopping" then
+        love.graphics.setColor(255,0,0)
+        love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 100)
+        love.graphics.setColor(oldr, oldg, oldb)
+        love.graphics.draw(self.wagon["graphics"], pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
+    end
     love.graphics.setScissor()
+    love.graphics.pop()
 
 
 end
@@ -238,11 +243,11 @@ function Platform:personPushed(i, power)
 end
 
 function Platform:evalStats(person)
-    if not self.wagon["status"] == "stopping" then
+    if self.wagon["status"] ~= "stopping" then
         self.statsDaily["peopleKilled"] = self.statsDaily["peopleKilled"] + 1
     elseif self.wagon["type"] == "woman" and person.gender == "male" then
         self.wagon["wronglyBoarded"] = self.wagon["wronglyBoarded"] + 1
-    elseif self.wagon["type"] == "lowac" and not person.type == "tourist" then
+    elseif self.wagon["type"] == "lowac" and person.type ~= "tourist" then
         self.wagon["wronglyBoarded"] = self.wagon["wronglyBoarded"] + 1
     end
     self.wagon["boardedPeople"] = self.wagon["boardedPeople"] + 1

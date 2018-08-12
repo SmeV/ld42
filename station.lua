@@ -1,4 +1,5 @@
 require "platform"
+require "statscreen"
 
 Station = {}
 Station.__index = Station
@@ -103,9 +104,13 @@ function Station:dayEnd()
 
     -- reduce money for killed people today!
     money = money - self.statsDaily["peopleKilled"] * 1000
+    self.stats["money"] = self.stats["money"] - self.statsDaily["peopleKilled"] * 1000
 
     -- bonus money for perfectly boarded trains!
     money = money + self.statsDaily["perfectlyBoardedTrains"] * 10000
+    self.stats["money"] = self.stats["money"] + self.statsDaily["perfectlyBoardedTrains"] * 10000
+
+    --statsscreen:open()
 end
 
 function Station:newDay()
@@ -136,6 +141,7 @@ function Station:evalTrain()
         wronglyBoarded = wronglyBoarded + platform.wagon["wronglyBoarded"]
         newMoney = newMoney + platform:evalWagon()
     end 
+    self.statsDaily["money"] = self.statsDaily["money"] + newMoney
     if wronglyBoarded == 0 then
         self.statsDaily["perfectlyBoardedTrains"] = self.statsDaily["perfectlyBoardedTrains"] + 1
     end

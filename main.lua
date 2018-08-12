@@ -1,6 +1,7 @@
 require "station"
 require "gui"
 require "button"
+require "statscreen"
 
 
 -- called once at startup, load resources here
@@ -27,6 +28,7 @@ function love.load()
     love.graphics.setColor(0,0,0)
     love.graphics.setBackgroundColor(255,255,255)
 
+
     -- initialize vars
     mode = "title"
     level ="shimbashi"
@@ -41,6 +43,8 @@ function love.load()
     money = 0
     pos = 0
 
+    statistics = StatScreen:create(current_station, stations[current_station].stats)
+    --statistics:changeAnimationStatus("bla")
 end
 
 -- called continuously, drawing happens here
@@ -59,12 +63,25 @@ function love.draw()
 
         gui:draw(stations[current_station].platforms[wagon_num].num_people)
     end
+    if statistics.isActive then
+        statistics:draw()
+    end
 end
 
 -- called continuously, do math here
 function love.update(dt)
+    if statistics.isActive then
+        statistics:update(dt)
+        return
+    end
     time_s =  time_s + 288 * dt
-    if time_s >= 86400 then
+    if time_s >= 5*3600 + 10800 then
+        for sname, station in pairs(stations) do
+            station:dayEnd()
+            station:newDay()
+        end
+        statistics:open()
+
         time_s = 5 * 3600
     end
     time_m = math.floor(time_s/60) % 60 
@@ -74,11 +91,22 @@ function love.update(dt)
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
+    if statistics.isActive then
+        statistics:mousemoved(x,y,dx,dy,istouch)
+        return
+    end
+
     stations[current_station]:mousemoved(x, y, dx, dy, istouch)
     gui:mousemoved(x, y, dx, dy, istouch)
+
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
+    if statistics.isActive then
+        statistics:mousepressed(x,y,button,istouch, presses)
+        return
+    end
+
     stations[current_station]:mousepressed(x, y, button, istouch, presses)
     gui:mousepressed(x, y, button, istouch, presses)
 end
