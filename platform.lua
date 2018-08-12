@@ -122,7 +122,7 @@ function Platform:draw(animate_factor)
 
     -- draw humans
     for i, line in pairs(self.lines) do
-        line:draw(((self.number-1)*4 + math.ceil(i/2)) * g_wagon:getWidth()/4 - 75 + i%2 * 100, g_platform:getHeight() * 0.68)
+        line:draw(((self.number-1)*5 + math.ceil(i/2)) * g_wagon:getWidth()/5 + 50 - 10 + i%2 * 100, g_platform:getHeight() * 0.68, i%2)
     end
     
     -- Minimap of current station
@@ -144,7 +144,7 @@ function Platform:draw(animate_factor)
         love.graphics.draw(self.wagon["graphics"], pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
     elseif self.wagon["status"] == "stopping" then
         love.graphics.setColor(255,0,0)
-        love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 100)
+        --love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 100)
         love.graphics.setColor(oldr, oldg, oldb)
         love.graphics.draw(self.wagon["graphics"], pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
     end
@@ -164,7 +164,7 @@ function Platform:update(dt, modifier, status)
 
         self.num_people = self.people[4]+self.people[1]+self.people[2]+self.people[3]
     end
-    if not status == "stopping" then
+    if status ~= "stopping" then
         self.wagon["fillStatus"] = 0.0
     end
     self.pushPowerNeeded = 1.0 / (1.0 / (1.0 + self.wagon["fillStatus"]))

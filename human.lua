@@ -27,6 +27,10 @@ function Human:create(gender, type)
     return human
 end
 
-function Human:draw(x, y, linepos)
-    love.graphics.draw(self.graphics, x, y + linepos * 25)
+function Human:draw(x, y, linepos, turn)
+    if turn == 0 then
+        love.graphics.draw(self.graphics, x, y + linepos * 25, 0, -1, 1)
+    else
+        love.graphics.draw(self.graphics, x, y + linepos * 25, 0, 1, 1)
+    end
 end

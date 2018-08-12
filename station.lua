@@ -56,6 +56,14 @@ function Station:draw()
         --draw platform
         love.graphics.draw(g_platform, (i-1) * self.graphic:getWidth(), 0)
     end
+    if self.status == "stopping" then
+        love.graphics.push()
+        love.graphics.setColor(255,0,0)
+        love.graphics.rectangle("fill",pos + 50, 100, 1000 * (1.0 - self.timer / self.halt_time), 100)
+        love.graphics.setColor(255,255,255)
+        love.graphics.pop()
+    end
+
     for i, plat in pairs(self.platforms) do
         plat:draw(animation_factor)
     end

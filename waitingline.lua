@@ -30,8 +30,8 @@ function WaitingLine:getSize()
     return self.last - self.first + 1
 end
 
-function WaitingLine:draw(x, y)
+function WaitingLine:draw(x, y, turn)
     for i = self.last, self.first, -1 do
-        self[i]:draw(x, y, self.last - i)
+        self[i]:draw(x, y, self.last - i, turn)
     end
 end
