@@ -15,6 +15,7 @@ function love.load()
     g_wagon_woman = love.graphics.newImage("images/train_wagon_woman.png")
     g_wagon_ac = love.graphics.newImage("images/train_wagon_ac.png")
     g_title = love.graphics.newImage("images/titel.png")
+    g_stations_map = love.graphics.newImage("images/all_stations_map.png")
 
     love.graphics.setNewFont(46)
     love.graphics.setColor(0,0,0)
