@@ -33,7 +33,13 @@ function Platform:create(num)
     table.insert(platform.doormodulos, 0)
 
     platform.num_people = 0
-    platform.wagon_type = "normal"
+    if num == 1 then
+        platform.wagon_type ="woman"
+    elseif num == 4 then
+        platform.wagon_type = "lowac"
+    else
+        platform.wagon_type = "normal"
+    end
     platform.custom_dt = 0
     platform.boarding_multiplier = 1
     platform.boarded_people = 0
@@ -53,24 +59,44 @@ function Platform:draw(status, animate_factor)
     local s = 100.0/1250.0
     local oldr, oldg, oldb = love.graphics.getColor()
 
-        --love.graphics.draw(g_platform, (self.number-1) * g_platform:getWidth(), 0)
+    -- label woman only and low ac cars on platfrom
+    love.graphics.setColor(0,0,0)
+    if self.wagon_type == "woman" then
+        love.graphics.print("From 6 to 9:30 Woman only",(self.number-1) * g_wagon:getWidth() + 100, 300+ g_wagon:getHeight() + 200)
+    elseif self.wagon_type == "lowac" then
+        love.graphics.print("Weak Air Conditioning",(self.number-1) * g_wagon:getWidth() + 100, 300+ g_wagon:getHeight() + 200)
+    end
+    love.graphics.setColor(oldr, oldg, oldb)
 
     -- train animation
     if status == "leaving" then
-        if self.wagon_type == "normal" then
+        if self.wagon_type == "lowac" then
+            love.graphics.draw(g_wagon_ac, (self.number-1) * (g_wagon:getWidth()) + 100 - animate_factor, 300)
+        elseif self.wagon_type == "woman" then
+            love.graphics.draw(g_wagon_woman, (self.number-1) * (g_wagon:getWidth()) + 100 - animate_factor, 300)
+        else
             love.graphics.draw(g_wagon, (self.number-1) * (g_wagon:getWidth()) + 100 - animate_factor, 300)
         end
     end
     if status == "entering" then
-        if self.wagon_type == "normal" then
+        if self.wagon_type == "lowac" then
+            love.graphics.draw(g_wagon_ac, (self.number-1) * g_wagon:getWidth() + 100 + g_platform:getWidth()*10 - animate_factor, 300)
+        elseif self.wagon_type == "woman" then
+            love.graphics.draw(g_wagon_woman, (self.number-1) * g_wagon:getWidth() + 100 + g_platform:getWidth()*10 - animate_factor, 300)
+        else
             love.graphics.draw(g_wagon, (self.number-1) * g_wagon:getWidth() + 100 + g_platform:getWidth()*10 - animate_factor, 300)
         end
     end
     if status == "stopping" then
-        if self.wagon_type == "normal" then
+        if self.wagon_type == "lowac" then
+            love.graphics.draw(g_wagon_ac, (self.number-1) * g_wagon:getWidth() + 100, 300)
+        elseif self.wagon_type == "woman" then
+            love.graphics.draw(g_wagon_woman, (self.number-1) * g_wagon:getWidth() + 100, 300)
+        else
             love.graphics.draw(g_wagon, (self.number-1) * g_wagon:getWidth() + 100, 300)
         end
     end
+
 
     -- draw clickables
     for i, clickable in pairs(self.push_clickables) do
@@ -91,21 +117,33 @@ function Platform:draw(status, animate_factor)
 
     -- train animation
     if status == "leaving" then
-        if self.wagon_type == "normal" then
+        if self.wagon_type == "lowac" then
+            love.graphics.draw(g_wagon_ac, pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
+        elseif self.wagon_type == "woman" then
+            love.graphics.draw(g_wagon_woman, pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
+        else
             -- gui
             love.graphics.draw(g_wagon, pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
         end
     end
     if status == "entering" then
-        if self.wagon_type == "normal" then
+        if self.wagon_type == "lowac" then
+            love.graphics.draw(g_wagon_ac, pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
+        elseif self.wagon_type == "woman" then
+            love.graphics.draw(g_wagon_woman, pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
+        else
             love.graphics.draw(g_wagon, pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
         end
     end
     if status == "stopping" then
-        if self.wagon_type == "normal" then
-            love.graphics.setColor(255,0,0)
-            love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 100)
-            love.graphics.setColor(oldr, oldg, oldb)
+        love.graphics.setColor(255,0,0)
+        love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 100)
+        love.graphics.setColor(oldr, oldg, oldb)
+        if self.wagon_type == "lowac" then
+            love.graphics.draw(g_wagon_ac, pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
+        elseif self.wagon_type == "woman" then
+            love.graphics.draw(g_wagon_woman, pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
+        else
             love.graphics.draw(g_wagon, pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
         end
     end
@@ -117,6 +155,8 @@ function Platform:draw(status, animate_factor)
     end
 
     love.graphics.setScissor()
+
+
 end
 
 function Platform:update(dt, modifier, status)

@@ -12,6 +12,8 @@ function love.load()
     g_platform = love.graphics.newImage("images/platform.png")
     g_human = love.graphics.newImage("images/passenger.png")
     g_wagon = love.graphics.newImage("images/train_wagon.png")
+    g_wagon_woman = love.graphics.newImage("images/train_wagon_woman.png")
+    g_wagon_ac = love.graphics.newImage("images/train_wagon_ac.png")
     g_title = love.graphics.newImage("images/titel.png")
 
     love.graphics.setNewFont(46)
