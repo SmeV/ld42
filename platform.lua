@@ -86,6 +86,8 @@ function Platform:create(num)
     table.insert(platform.doormodulos, 0)
 
     platform.num_people = 0
+    platform.color_factor = 0.0001
+    platform.clever_factor = 100.0
 
     platform:initClickables()
 
@@ -100,6 +102,7 @@ function Platform:draw(animate_factor)
     love.graphics.setColor(0,0,0)
     if self.number == 1 then
         love.graphics.print("From 6 to 9:30 Woman only",(self.number-1) * g_wagon:getWidth() + 100, 300+ g_wagon:getHeight() + 200)
+        --love.graphics.print("XXXXXXXXXXXXXXXxxx",(self.number-1) * g_wagon:getWidth() + 100, 300+ g_wagon:getHeight() + 200)
     elseif self.number == 4 then
         love.graphics.print("Weak Air Conditioning",(self.number-1) * g_wagon:getWidth() + 100, 300+ g_wagon:getHeight() + 200)
     end
@@ -160,8 +163,6 @@ function Platform:draw(animate_factor)
         end
     end
 
-
-    -- draw clickables
     for i, clickable in pairs(self.push_clickables) do
         clickable:draw()
     end
@@ -172,10 +173,11 @@ function Platform:draw(animate_factor)
     end
     
     -- Minimap of current station
-    love.graphics.push()
+    --love.graphics.push()
+    love.graphics.setColor(oldr, oldg, oldb)
     love.graphics.setScissor(50, 50, 1000, 200)
     love.graphics.draw(g_platform, pos + (self.number-1) * g_platform:getWidth() * s +50, 150, 0, s, s)
-    love.graphics.setColor(255,0,0)
+    love.graphics.setColor(math.min(1,1*math.max(0,self.color_factor)),math.min(1,1*math.max(0,(1.0/self.color_factor))),0)
     love.graphics.circle("fill",pos + (self.number-1) * 100 + 50 + 50, 225, 15)
     love.graphics.setColor(oldr, oldg, oldb)
 
@@ -195,8 +197,8 @@ function Platform:draw(animate_factor)
             love.graphics.draw(g_window0, pos + (self.number-1) * g_wagon:getWidth() * s + 50 + s*60 + g_platform:getWidth()*10*s + (i-1) * (g_wagon:getWidth()*s/5) - animate_factor * s, 150+300*s+g_wagon:getHeight()*s/2, 0, s, s)
         end
     elseif self.wagon["status"] == "stopping" then
-        love.graphics.setColor(255,0,0)
-        --love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 100)
+        love.graphics.setColor(math.min(1,1*math.max(0,self.color_factor)),math.min(1,1*math.max(0,(1.0/self.color_factor))),0)
+        love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 70)
         love.graphics.setColor(oldr, oldg, oldb)
         love.graphics.draw(self.wagon["graphics"], pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
         for i=1,5 do
@@ -205,7 +207,7 @@ function Platform:draw(animate_factor)
     elseif self.wagon["status"] == "stopping" then
     end
     love.graphics.setScissor()
-    love.graphics.pop()
+    --love.graphics.pop()
 
 
 end
@@ -219,6 +221,7 @@ function Platform:update(dt, modifier, status)
         self.custom_dt = 0
 
         self.num_people = self.people[4]+self.people[1]+self.people[2]+self.people[3]
+        self.color_factor = self.num_people / (self.boarding_multiplier * self.clever_factor)
     end
     if status ~= "stopping" then
         self.wagon["fillStatus"] = 0.0
