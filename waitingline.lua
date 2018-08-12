@@ -31,7 +31,7 @@ function WaitingLine:getSize()
 end
 
 function WaitingLine:draw(x, y)
-    for i = self.first, self.last do
-        self[i]:draw(x, y, i - self.first)
+    for i = self.last, self.first, -1 do
+        self[i]:draw(x, y, self.last - i)
     end
 end

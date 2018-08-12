@@ -11,17 +11,17 @@ function Human:create(gender, type)
 
     human.graphics = g_wagon
     if human.gender == "male" and human.type == "business" then
-        human.graphics = g_human
+        human.graphics = g_busim
     elseif human.gender == "male" and human.type == "tourist" then
-        human.graphics = g_human
+        human.graphics = g_vacam
     elseif human.gender == "male" and human.type == "pupil" then
-        human.graphics = g_human
+        human.graphics = g_schom
     elseif human.gender == "female" and human.type == "business" then
-        human.graphics = g_human
+        human.graphics = g_busiw
     elseif human.gender == "female" and human.type == "tourist" then
-        human.graphics = g_human
+        human.graphics = g_vacaw
     elseif human.gender == "female" and human.type == "pupil" then
-        human.graphics = g_human
+        human.graphics = g_schow
     end
 
     return human
