@@ -1,35 +1,35 @@
-Button = {}
-Button.__index = Button
+Clickable = {}
+Clickable.__index = Clickable
 
-function Button:create(x, y, width, height) 
-    local button = {}
-    setmetatable(button, Button)
-    button.x = x
-    button.y = y
-    button.width = width
-    button.height = height
-    button.hovered = false
+function Clickable:create(x, y, width, height) 
+    local clickable = {}
+    setmetatable(clickable, Clickable)
+    clickable.x = x
+    clickable.y = y
+    clickable.width = width
+    clickable.height = height
+    clickable.hovered = false
 
-    return button
+    return clickable
 end
 
 
-function Button:mousepressed(x, y, button, istouch, presses)
-    if x >= self.x and x < self.x + self.width and y >= self.y and y < self.y + self.height then
-        self:buttonPressed(button, istouch, presses)
+function Clickable:mousepressed(x, y, button, istouch, presses)
+    if (x + pos) >= self.x and (x + pos) < self.x + self.width and y >= self.y and y < self.y + self.height then
+        self:clicked(button, istouch, presses)
     end
 end
 
-function Button:mousemoved(x,y, dx, dy, istouch)
-    if x >= self.x and x < self.x + self.width and y >= self.y and y < self.y + self.height then
+function Clickable:mousemoved(x,y, dx, dy, istouch)
+    if (x + pos) >= self.x and (x + pos) < self.x + self.width and y >= self.y and y < self.y + self.height then
         self.hovered = true
     else
         self.hovered = false
     end
 end
 
-function Button:buttonPressed(button, istouch, presses)
+function Clickable:clicked(button, istouch, presses)
 end
 
-function Button:draw()
+function Clickable:draw()
 end

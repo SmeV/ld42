@@ -31,6 +31,8 @@ function Station:draw()
     animation_factor = self.timer/self.animation_time * 10 * self.graphic:getWidth()
     for i = 1, 10 do
         love.graphics.draw(self.graphic, (i-1) * self.graphic:getWidth(), 0)
+        --draw platform
+        love.graphics.draw(g_platform, (i-1) * self.graphic:getWidth(), 0)
     end
     for i, plat in pairs(self.platforms) do
         plat:draw(self.status, animation_factor)
