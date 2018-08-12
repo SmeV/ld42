@@ -74,10 +74,12 @@ end
 
 function love.mousemoved(x, y, dx, dy, istouch)
     stations[current_station]:mousemoved(x, y, dx, dy, istouch)
+    gui:mousemoved(x, y, dx, dy, istouch)
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
     stations[current_station]:mousepressed(x, y, button, istouch, presses)
+    gui:mousepressed(x, y, button, istouch, presses)
 end
 
 function love.keypressed(key)
