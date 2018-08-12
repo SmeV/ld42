@@ -282,10 +282,10 @@ end
 function Platform:initClickables()
     local platform = self
     platform.push_clickables = {}
-    platform.push1 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 100 + 0 * 400, 300, (g_wagon:getWidth() / 4), 600)
-    platform.push2 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 100 + 1 * 400, 300, (g_wagon:getWidth() / 4), 600)
-    platform.push3 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 100 + 2 * 400, 300, (g_wagon:getWidth() / 4), 600)
-    platform.push4 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 100 + 3 * 400, 300, (g_wagon:getWidth() / 4), 600)
+    platform.push1 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 225 + 0 * 250, 300, (g_wagon:getWidth() / 5), 600)
+    platform.push2 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 225 + 1 * 250, 300, (g_wagon:getWidth() / 5), 600)
+    platform.push3 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 225 + 2 * 250, 300, (g_wagon:getWidth() / 5), 600)
+    platform.push4 = Clickable:create((platform.number-1) * g_wagon:getWidth() + 225 + 3 * 250, 300, (g_wagon:getWidth() / 5), 600)
     platform.push1.numclicked = 0
     function platform.push1:clicked(button)
         if button == 1 then
@@ -307,6 +307,7 @@ function Platform:initClickables()
             platform:personPushed(4,1)
         end
     end
+    --[[ DEBUG DRAW
     function platform.push1:draw()
         oldr, oldg, oldb = love.graphics.getColor()
         if self.hovered then
@@ -329,6 +330,7 @@ function Platform:initClickables()
         love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
         love.graphics.setColor(oldr, oldg, oldb)
     end
+    ]]--
     table.insert(platform.push_clickables, platform.push1)
     table.insert(platform.push_clickables, platform.push2)
     table.insert(platform.push_clickables, platform.push3)
