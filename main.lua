@@ -1,20 +1,27 @@
 require "station"
 require "gui"
 require "button"
+require "statscreen"
 
 
 -- called once at startup, load resources here
 function love.load()
-    love.window.setMode(1920, 1080)
+    love.window.setMode(1920, 1080, {vsync=true})
 
     -- load images
     g_shimbashi = love.graphics.newImage("images/shimbashi_subway.png")
     g_platform = love.graphics.newImage("images/platform.png")
-    g_human = love.graphics.newImage("images/passenger.png")
     g_wagon = love.graphics.newImage("images/train_wagon.png")
     g_wagon_woman = love.graphics.newImage("images/train_wagon_woman.png")
     g_wagon_ac = love.graphics.newImage("images/train_wagon_ac.png")
     g_title = love.graphics.newImage("images/titel.png")
+    g_human = love.graphics.newImage("images/passenger.png")
+    g_busiw = love.graphics.newImage("images/p_business_girl.png")
+    g_busim = love.graphics.newImage("images/p_business_guy.png")
+    g_schow = love.graphics.newImage("images/p_school_girl.png")
+    g_schom = love.graphics.newImage("images/p_school_guy.png")
+    g_vacaw = love.graphics.newImage("images/p_vacation_girl.png")
+    g_vacam = love.graphics.newImage("images/p_vacation_guy.png")
     g_stations_map = love.graphics.newImage("images/all_stations_map.png")
     g_window0 = love.graphics.newImage("images/w0.png")
     g_window1= love.graphics.newImage("images/w1.png")
@@ -25,6 +32,7 @@ function love.load()
     love.graphics.setNewFont(46)
     love.graphics.setColor(0,0,0)
     love.graphics.setBackgroundColor(255,255,255)
+
 
     -- initialize vars
     mode = "title"
@@ -40,6 +48,8 @@ function love.load()
     money = 0
     pos = 0
 
+    statistics = StatScreen:create(current_station, stations[current_station].stats)
+    --statistics:changeAnimationStatus("bla")
 end
 
 -- called continuously, drawing happens here
@@ -58,32 +68,50 @@ function love.draw()
 
         gui:draw(stations[current_station].platforms[wagon_num].num_people)
     end
+    if statistics.isActive then
+        statistics:draw()
+    end
 end
 
 -- called continuously, do math here
 function love.update(dt)
+    if statistics.isActive then
+        statistics:update(dt)
+        return
+    end
     time_s =  time_s + 288 * dt
-    if time_s >= 86400 then
+    if time_s >= 5*3600 + 10800 then
+        for sname, station in pairs(stations) do
+            station:dayEnd()
+            station:newDay()
+        end
+        statistics:open()
+
         time_s = 5 * 3600
     end
     time_m = math.floor(time_s/60) % 60 
     time_h = math.floor(time_s/3600) % 24
     stations[current_station]:update(dt)
 
-    cur_money = 0
-    for i, stat in pairs(stations) do
-        cur_money = cur_money + stat.money
-        stat.money = 0
-    end
-    money = money + cur_money 
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
+    if statistics.isActive then
+        statistics:mousemoved(x,y,dx,dy,istouch)
+        return
+    end
+
     stations[current_station]:mousemoved(x, y, dx, dy, istouch)
     gui:mousemoved(x, y, dx, dy, istouch)
+
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
+    if statistics.isActive then
+        statistics:mousepressed(x,y,button,istouch, presses)
+        return
+    end
+
     stations[current_station]:mousepressed(x, y, button, istouch, presses)
     gui:mousepressed(x, y, button, istouch, presses)
 end
