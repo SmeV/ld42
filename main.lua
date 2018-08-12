@@ -21,6 +21,7 @@ function love.load()
     g_schom = love.graphics.newImage("images/p_school_guy.png")
     g_vacaw = love.graphics.newImage("images/p_vacation_girl.png")
     g_vacam = love.graphics.newImage("images/p_vacation_guy.png")
+    g_stations_map = love.graphics.newImage("images/all_stations_map.png")
 
     love.graphics.setNewFont(46)
     love.graphics.setColor(0,0,0)
