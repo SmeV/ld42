@@ -35,10 +35,13 @@ function Platform:create(num)
     platform.num_people = 0
     if num == 1 then
         platform.wagon_type ="woman"
+        platform.graphics = g_wagon_woman
     elseif num == 4 then
         platform.wagon_type = "lowac"
+        platform.graphics = g_wagon_ac
     else
         platform.wagon_type = "normal"
+        platform.graphics = g_wagon
     end
     platform.custom_dt = 0
     platform.boarding_multiplier = 1
@@ -49,6 +52,7 @@ function Platform:create(num)
     platform.autoBoardingMax = 0.1
     platform.pushPowerNeeded = 1.0
     platform.currentPower = 0.0
+    platform.powerSaver = 0.0
 
     platform:initClickables()
 
@@ -70,31 +74,13 @@ function Platform:draw(status, animate_factor)
 
     -- train animation
     if status == "leaving" then
-        if self.wagon_type == "lowac" then
-            love.graphics.draw(g_wagon_ac, (self.number-1) * (g_wagon:getWidth()) + 100 - animate_factor, 300)
-        elseif self.wagon_type == "woman" then
-            love.graphics.draw(g_wagon_woman, (self.number-1) * (g_wagon:getWidth()) + 100 - animate_factor, 300)
-        else
-            love.graphics.draw(g_wagon, (self.number-1) * (g_wagon:getWidth()) + 100 - animate_factor, 300)
-        end
+        love.graphics.draw(self.graphics, (self.number-1) * (g_wagon:getWidth()) + 100 - animate_factor, 300)
     end
     if status == "entering" then
-        if self.wagon_type == "lowac" then
-            love.graphics.draw(g_wagon_ac, (self.number-1) * g_wagon:getWidth() + 100 + g_platform:getWidth()*10 - animate_factor, 300)
-        elseif self.wagon_type == "woman" then
-            love.graphics.draw(g_wagon_woman, (self.number-1) * g_wagon:getWidth() + 100 + g_platform:getWidth()*10 - animate_factor, 300)
-        else
-            love.graphics.draw(g_wagon, (self.number-1) * g_wagon:getWidth() + 100 + g_platform:getWidth()*10 - animate_factor, 300)
-        end
+        love.graphics.draw(self.graphics, (self.number-1) * g_wagon:getWidth() + 100 + g_platform:getWidth()*10 - animate_factor, 300)
     end
     if status == "stopping" then
-        if self.wagon_type == "lowac" then
-            love.graphics.draw(g_wagon_ac, (self.number-1) * g_wagon:getWidth() + 100, 300)
-        elseif self.wagon_type == "woman" then
-            love.graphics.draw(g_wagon_woman, (self.number-1) * g_wagon:getWidth() + 100, 300)
-        else
-            love.graphics.draw(g_wagon, (self.number-1) * g_wagon:getWidth() + 100, 300)
-        end
+        love.graphics.draw(self.graphics, (self.number-1) * g_wagon:getWidth() + 100, 300)
     end
 
 
@@ -117,35 +103,16 @@ function Platform:draw(status, animate_factor)
 
     -- train animation
     if status == "leaving" then
-        if self.wagon_type == "lowac" then
-            love.graphics.draw(g_wagon_ac, pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
-        elseif self.wagon_type == "woman" then
-            love.graphics.draw(g_wagon_woman, pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
-        else
-            -- gui
-            love.graphics.draw(g_wagon, pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
-        end
+        love.graphics.draw(self.graphics, pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
     end
     if status == "entering" then
-        if self.wagon_type == "lowac" then
-            love.graphics.draw(g_wagon_ac, pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
-        elseif self.wagon_type == "woman" then
-            love.graphics.draw(g_wagon_woman, pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
-        else
-            love.graphics.draw(g_wagon, pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
-        end
+        love.graphics.draw(self.graphics, pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
     end
     if status == "stopping" then
         love.graphics.setColor(255,0,0)
         love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 100)
         love.graphics.setColor(oldr, oldg, oldb)
-        if self.wagon_type == "lowac" then
-            love.graphics.draw(g_wagon_ac, pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
-        elseif self.wagon_type == "woman" then
-            love.graphics.draw(g_wagon_woman, pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
-        else
-            love.graphics.draw(g_wagon, pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
-        end
+        love.graphics.draw(self.graphics, pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
     end
 
     if self.number == wagon_num then
@@ -225,12 +192,14 @@ function Platform:autoBoarding(status)
 end
 
 function Platform:personPushed(i, power)
-    local pushed = self.lines[i * 2 - self.doormodulos[i] % 2]:pop()
-    if pushed == nil then
-        self.doormodulos[i] = self.doormodulos[i] % 2 + 1
-    else
-        self.currentPower = self.currentPower + power
-        if self.currentPower >= self.pushPowerNeeded then
+    self.currentPower = self.currentPower + power
+    while self.currentPower >= self.pushPowerNeeded do
+        local pushed = self.lines[i * 2 - self.doormodulos[i] % 2]:pop()
+        if pushed == nil then
+            self.doormodulos[i] = self.doormodulos[i] % 2 + 1
+            self.currentPower = self.currentPower * self.powerSaver
+            break
+        else
             local combinedSize = self.lines[i*2 + 0]:getSize() + self.lines[i*2 - 1]:getSize()
             self.boarded_people = self.boarded_people + 1
             self.people[i] = self.people[i] - 1
@@ -238,7 +207,7 @@ function Platform:personPushed(i, power)
                 self.lines[i * 2 - self.doormodulos[i] % 2]:push(Human:create())
             end
             self.wagonFillStatus = self.wagonFillStatus + 1.0 / self.wagonSize
-            self.currentPower = 0
+            self.currentPower = self.currentPower - self.pushPowerNeeded
             self.doormodulos[i] = self.doormodulos[i] % 2 + 1
         end
     end
@@ -266,22 +235,22 @@ function Platform:initClickables()
     platform.push1.numclicked = 0
     function platform.push1:clicked(button)
         if button == 1 then
-            platform:personPushed(1,1)
+            platform:personPushed(1,100)
         end
     end
     function platform.push2:clicked(button)
         if button == 1 then
-            platform:personPushed(2,1)
+            platform:personPushed(2,100)
         end
     end
     function platform.push3:clicked(button)
         if button == 1 then
-            platform:personPushed(3,1)
+            platform:personPushed(3,100)
         end
     end
     function platform.push4:clicked(button)
         if button == 1 then
-            platform:personPushed(4,1)
+            platform:personPushed(4,100)
         end
     end
     function platform.push1:draw()

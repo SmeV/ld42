@@ -9,7 +9,7 @@ function Human:create(gender, type)
     human.gender = gender or all_genders[math.random(2)]
     human.type = type or all_types[math.random(3)]
 
-    human.graphics = g_human
+    human.graphics = g_wagon
     if human.gender == "male" and human.type == "business" then
         human.graphics = g_human
     elseif human.gender == "male" and human.type == "tourist" then
