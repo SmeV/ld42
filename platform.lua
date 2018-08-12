@@ -108,10 +108,56 @@ function Platform:draw(animate_factor)
     -- train animation
     if self.wagon["status"] == "leaving" then
         love.graphics.draw(self.wagon["graphics"], (self.number-1) * (g_wagon:getWidth()) + 100 - animate_factor, 300)
+
+        --draw windows
+        for i=1,5 do
+            if self.wagon["fillStatus"] <= 0.25 then
+                love.graphics.draw(g_window0, (self.number-1) * g_wagon:getWidth() + 150 + (i-1) * (g_wagon:getWidth()/5)- animate_factor, 300+g_wagon:getHeight()/2)
+            elseif self.wagon["fillStatus"] <= 0.5 then
+                love.graphics.draw(g_window1, (self.number-1) * g_wagon:getWidth() + 150 + (i-1) * (g_wagon:getWidth()/5)- animate_factor, 300+g_wagon:getHeight()/2)
+            elseif self.wagon["fillStatus"] <= 0.75 then
+                love.graphics.draw(g_window2, (self.number-1) * g_wagon:getWidth() + 150 + (i-1) * (g_wagon:getWidth()/5)- animate_factor, 300+g_wagon:getHeight()/2)
+            elseif self.wagon["fillStatus"] <= 1.0 then
+                love.graphics.draw(g_window3, (self.number-1) * g_wagon:getWidth() + 150 + (i-1) * (g_wagon:getWidth()/5)- animate_factor, 300+g_wagon:getHeight()/2)
+            else
+                love.graphics.draw(g_window4, (self.number-1) * g_wagon:getWidth() + 150 + (i-1) * (g_wagon:getWidth()/5)- animate_factor, 300+g_wagon:getHeight()/2)
+            end
+        end
     elseif self.wagon["status"] == "entering" then
         love.graphics.draw(self.wagon["graphics"], (self.number-1) * g_wagon:getWidth() + 100 + g_platform:getWidth()*10 - animate_factor, 300)
+
+        --draw windows
+        for i=1,5 do
+            if self.wagon["fillStatus"] <= 0.25 then
+                love.graphics.draw(g_window0, (self.number-1) * g_wagon:getWidth() + 150 + g_platform:getWidth()*10 + (i-1) * (g_wagon:getWidth()/5)- animate_factor, 300+g_wagon:getHeight()/2)
+            elseif self.wagon["fillStatus"] <= 0.5 then
+                love.graphics.draw(g_window1, (self.number-1) * g_wagon:getWidth() + 150 + g_platform:getWidth()*10 + (i-1) * (g_wagon:getWidth()/5)- animate_factor, 300+g_wagon:getHeight()/2)
+            elseif self.wagon["fillStatus"] <= 0.75 then
+                love.graphics.draw(g_window2, (self.number-1) * g_wagon:getWidth() + 150 + g_platform:getWidth()*10 + (i-1) * (g_wagon:getWidth()/5)- animate_factor, 300+g_wagon:getHeight()/2)
+            elseif self.wagon["fillStatus"] <= 1.0 then
+                love.graphics.draw(g_window3, (self.number-1) * g_wagon:getWidth() + 150 + g_platform:getWidth()*10 + (i-1) * (g_wagon:getWidth()/5)- animate_factor, 300+g_wagon:getHeight()/2)
+            else
+                love.graphics.draw(g_window4, (self.number-1) * g_wagon:getWidth() + 150 + g_platform:getWidth()*10 + (i-1) * (g_wagon:getWidth()/5)- animate_factor, 300+g_wagon:getHeight()/2)
+            end
+        end
+
     elseif self.wagon["status"] == "stopping" then
         love.graphics.draw(self.wagon["graphics"], (self.number-1) * g_wagon:getWidth() + 100, 300)
+
+        --draw windows
+        for i=1,5 do
+            if self.wagon["fillStatus"] <= 0.25 then
+                love.graphics.draw(g_window0, (self.number-1) * g_wagon:getWidth() + 150 + (i-1) * (g_wagon:getWidth()/5), 300+g_wagon:getHeight()/2)
+            elseif self.wagon["fillStatus"] <= 0.5 then
+                love.graphics.draw(g_window1, (self.number-1) * g_wagon:getWidth() + 150 + (i-1) * (g_wagon:getWidth()/5), 300+g_wagon:getHeight()/2)
+            elseif self.wagon["fillStatus"] <= 0.75 then
+                love.graphics.draw(g_window2, (self.number-1) * g_wagon:getWidth() + 150 + (i-1) * (g_wagon:getWidth()/5), 300+g_wagon:getHeight()/2)
+            elseif self.wagon["fillStatus"] <= 1.0 then
+                love.graphics.draw(g_window3, (self.number-1) * g_wagon:getWidth() + 150 + (i-1) * (g_wagon:getWidth()/5), 300+g_wagon:getHeight()/2)
+            else
+                love.graphics.draw(g_window4, (self.number-1) * g_wagon:getWidth() + 150 + (i-1) * (g_wagon:getWidth()/5), 300+g_wagon:getHeight()/2)
+            end
+        end
     end
 
 
@@ -140,13 +186,23 @@ function Platform:draw(animate_factor)
     end
     if self.wagon["status"] == "leaving" then
         love.graphics.draw(self.wagon["graphics"], pos + (self.number-1) * g_wagon:getWidth() * s + 50 - animate_factor * s --[[/(10*g_platform:getWidth())*1000]], 150+300*s, 0, s, s)
+        for i=1,5 do
+            love.graphics.draw(g_window0, pos + (self.number-1) * g_wagon:getWidth() *s + 50 + s*60 + (i-1) * (g_wagon:getWidth()*s/5) - animate_factor * s, 150+300*s+g_wagon:getHeight()*s/2, 0, s, s)
+        end
     elseif self.wagon["status"] == "entering" then
         love.graphics.draw(self.wagon["graphics"], pos + (self.number-1)* g_wagon:getWidth() * s + 50 + g_platform:getWidth()*10*s - animate_factor*s, 150+300*s, 0, s,s)
+        for i=1,5 do
+            love.graphics.draw(g_window0, pos + (self.number-1) * g_wagon:getWidth() * s + 50 + s*60 + g_platform:getWidth()*10*s + (i-1) * (g_wagon:getWidth()*s/5) - animate_factor * s, 150+300*s+g_wagon:getHeight()*s/2, 0, s, s)
+        end
     elseif self.wagon["status"] == "stopping" then
         love.graphics.setColor(255,0,0)
         --love.graphics.rectangle("fill",pos + (self.number-1) * g_wagon:getWidth() * s + 50, 100, 100, 100)
         love.graphics.setColor(oldr, oldg, oldb)
         love.graphics.draw(self.wagon["graphics"], pos + (self.number-1) * g_wagon:getWidth() * s + 50, 150+300*s, 0, s,s)
+        for i=1,5 do
+            love.graphics.draw(g_window0, pos + (self.number-1) * g_wagon:getWidth() *s + 50 + s*60 + (i-1) * (g_wagon:getWidth()*s/5), 150+300*s+g_wagon:getHeight()*s/2,0, s, s)
+        end
+    elseif self.wagon["status"] == "stopping" then
     end
     love.graphics.setScissor()
     love.graphics.pop()
