@@ -248,21 +248,13 @@ function Platform:peopleAdded(modifier)
 
         if time_s >= 5*3600 and time_s <= 5.5 * 3600 then
             self.people[i] = self.people[i] + math.random(0, 1)
-        end
-
-        if time_s > 5.5 *3600 and time_s <= 9 * 3600 then
+        elseif time_s > 5.5 *3600 and time_s <= 9 * 3600 then
             self.people[i] = self.people[i] + math.floor((time_h - 4) * modifier * math.random(50, 100) / 40 * self.custom_dt)
-        end
-
-        if time_s > 9 *3600 and time_s <= 14 * 3600 then
+        elseif time_s > 9 *3600 and time_s <= 14 * 3600 then
             self.people[i] = self.people[i] + math.floor((15 - time_h) * modifier * math.random(10, 50) / 40 * self.custom_dt)
-        end
-
-        if time_s > 14 *3600 and time_s <= 21 * 3600 then
+        elseif time_s > 14 *3600 and time_s <= 21 * 3600 then
             self.people[i] = self.people[i] + math.floor((time_h - 13) * modifier * math.random(30, 80) / 40 * self.custom_dt)
-        end
-
-        if time_s > 21 *3600 and time_s <= 24 * 3600 then
+        elseif time_s > 21 *3600 and time_s <= 24 * 3600 then
             self.people[i] = self.people[i] + math.floor((25 - time_h) * modifier * math.random(30, 80) / 40 * self.custom_dt)
         end
     end
@@ -308,7 +300,7 @@ function Platform:personPushed(i, power)
         if pushed == nil then
             self.doormodulos[i] = self.doormodulos[i] % 2 + 1
             --self.currentPower = self.currentPower * self.powerSaver
-            self.currentPower = 0
+            --self.currentPower = 0
             break
         else
             if self:evalStats(pushed) then
@@ -320,6 +312,7 @@ function Platform:personPushed(i, power)
                 self.wagon["fillStatus"] = self.wagon["fillStatus"] + 1.0 / self.wagon["size"]
                 self.currentPower = self.currentPower - self.pushPowerNeeded
                 self.doormodulos[i] = self.doormodulos[i] % 2 + 1
+                pushed = nil
             else
                 self.lines[i * 2 - self.doormodulos[i] % 2]:pushFront(pushed)
                 break
@@ -438,30 +431,6 @@ function Platform:initClickables()
     function platform.push4:hoveredCallback(x,y)
         love.mouse.setCursor(hand_cursor)
     end
-    --[[ DEBUG DRAW
-    function platform.push1:draw()
-        oldr, oldg, oldb = love.graphics.getColor()
-        if self.hovered then
-            love.graphics.setColor(255, 0, 0)
-        else
-            love.graphics.setColor(0, 0, 255)
-        end
-        love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
-        love.graphics.print(self.numclicked, self.x + self.width / 2, self.y + self.height/2)
-        love.graphics.print(platform.people[1], self.x + self.width / 2, self.y + self.height/2 + 50)
-        love.graphics.setColor(oldr, oldg, oldb)
-    end
-    function platform.push2:draw()
-        oldr, oldg, oldb = love.graphics.getColor()
-        if self.hovered then
-            love.graphics.setColor(255, 0, 0)
-        else
-            love.graphics.setColor(0, 255, 255)
-        end
-        love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
-        love.graphics.setColor(oldr, oldg, oldb)
-    end
-    ]]--
     table.insert(platform.push_clickables, platform.push1)
     table.insert(platform.push_clickables, platform.push2)
     table.insert(platform.push_clickables, platform.push3)

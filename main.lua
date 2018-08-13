@@ -6,7 +6,7 @@ require "statscreen"
 
 -- called once at startup, load resources here
 function love.load()
-    love.window.setMode(1920, 1080, {vsync=true})
+    love.window.setMode(1920, 1080)
 
     -- load images
     g_shimbashi = love.graphics.newImage("images/shimbashi_subway.png")
@@ -29,8 +29,8 @@ function love.load()
     g_window3= love.graphics.newImage("images/w_3.png")
     g_window4= love.graphics.newImage("images/w_4.png")
     g_fence = love.graphics.newImage("images/fence.png")
-    g_openHand = love.graphics.newImage("images/HandIcon_Open.png")
     hand_cursor = love.mouse.newCursor("images/HandIcon_Open.png", 32, 32)
+    hand_cursor_point = love.mouse.newCursor("images/HandIcon_pointing.png", 32, 32)
     --love.mouse.setCursor(hand_cursor)
 
     love.graphics.setNewFont(46)

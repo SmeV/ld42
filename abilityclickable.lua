@@ -13,6 +13,9 @@ function AbilityClickable:create(ability, listPosition)
     function abilityClickable.clickable:clicked()
         abilityClickable:upgradeAbility()
     end
+    function abilityClickable.clickable:hoveredCallback()
+        love.mouse.setCursor(hand_cursor_point)
+    end
     abilityClickable.listPosition = listPosition
 
     return abilityClickable

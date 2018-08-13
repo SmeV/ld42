@@ -194,6 +194,9 @@ function Gui:initClickables()
         love.graphics.printf("^", self.x + pos, self.y, self.width, "center")
         love.graphics.pop()
     end
+    function scrollUpClickable:hoveredCallback()
+        love.mouse.setCursor(hand_cursor_point)
+    end
 
     local scrollDownClickable = Clickable:create(1850, 950, 50, 50)
     scrollDownClickable.fixed = true
@@ -218,6 +221,9 @@ function Gui:initClickables()
         love.graphics.printf("v", self.x + pos, self.y, self.width, "center")
         love.graphics.pop()
     end
+    function scrollDownClickable:hoveredCallback()
+        love.mouse.setCursor(hand_cursor_point)
+    end
 
     function gui.tab1_clickable:draw()
         if gui.current_tab == 1 then
@@ -235,6 +241,9 @@ function Gui:initClickables()
     function gui.tab1_clickable:clicked()
         gui.current_tab = 1
     end
+    function gui.tab1_clickable:hoveredCallback()
+        love.mouse.setCursor(hand_cursor_point)
+    end
 
     function gui.tab2_clickable:draw()
         if gui.current_tab == 2 then
@@ -251,6 +260,9 @@ function Gui:initClickables()
 
     function gui.tab2_clickable:clicked()
         gui.current_tab = 2
+    end
+    function gui.tab2_clickable:hoveredCallback()
+        love.mouse.setCursor(hand_cursor_point)
     end
 
     table.insert(gui.push_clickables, gui.tab1_clickable)

@@ -8,9 +8,9 @@ function Ability:create(name, explanation)
     ability.name = name
     ability.explanation = explanation
     ability.level = 0
-    ability.initCost = 5 --00
+    ability.initCost = 100
     ability.costIncrease = 1.2
-    ability.cost = 5
+    ability.cost = 100
 
     return ability
 end
