@@ -51,7 +51,7 @@ function love.load()
     time_h = 5
     time_m = 0
     time_s = 5* 3600
-    money = 1000000
+    money = 0
     pos = 0
     pushPower = 1.0
 
@@ -83,6 +83,9 @@ end
 
 -- called continuously, do math here
 function love.update(dt)
+    if mode == "title" then
+        return
+    end
     if statistics.isActive then
         statistics:update(dt)
         return
