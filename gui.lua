@@ -1,5 +1,7 @@
 require "button"
 require "abilityclickable"
+require "stationclickable"
+
 Gui = {}
 Gui.__index = Gui
 
@@ -16,9 +18,13 @@ function Gui:create()
     gui.ability_clickables = {}
     gui:initAbilityClickables()
 
+    gui.station_clickables = {}
+    gui:initStationClickables()
+
     for i, abiclick in pairs(gui.ability_clickables) do
         abiclick:updatePosition(gui.scrollPosition)
     end
+
     return gui
 end
 
@@ -46,6 +52,10 @@ function Gui:draw(num_people)
     for i, abiclick in pairs(self.ability_clickables) do 
         abiclick:draw(self.scrollPosition, self.current_tab)
     end
+
+    for i, sclick in pairs(self.station_clickables) do 
+        sclick:draw(self.current_tab)
+    end
 end
 
 function Gui:mousemoved(x, y, dx, dy, istouch)
@@ -55,6 +65,9 @@ function Gui:mousemoved(x, y, dx, dy, istouch)
     for i, abiclick in pairs(self.ability_clickables) do
         abiclick:mousemoved(x, y, dx, dy, istouch, self.scrollPosition, self.current_tab)
     end
+    for i, sclick in pairs(self.station_clickables) do
+        sclick:mousemoved(x, y, dx, dy, istouch, self.current_tab)
+    end
 end
 
 function Gui:mousepressed(x, y, button, istouch, presses)
@@ -63,6 +76,9 @@ function Gui:mousepressed(x, y, button, istouch, presses)
     end
     for i, abiclick in pairs(self.ability_clickables) do
         abiclick:mousepressed(x, y, button, istouch, presses, self.scrollPosition, self.current_tab)
+    end
+    for i, sclick in pairs(self.station_clickables) do
+        sclick:mousepressed(x, y, button, istouch, presses, self.current_tab)
     end
 end
 
@@ -75,6 +91,25 @@ function Gui:initAbilityClickables()
     table.insert(self.ability_clickables, a2)
     table.insert(self.ability_clickables, a3)
     --table.insert(self.ability_clickables, a4)
+end
+
+function Gui:initStationClickables()
+    local s0 = StationClickable:create("shimbashi", 0, 0)
+    s0.stationAvailable = false
+    local s1 = StationClickable:create("Takadanobaba", 1, 10000)
+    local s2 = StationClickable:create("Shinagawa", 2, 30000)
+    local s3 = StationClickable:create("Tokyo", 3, 50000)
+    local s4 = StationClickable:create("Shibuya", 4, 90000)
+    local s5 = StationClickable:create("Ikebukoro", 5, 18000)
+    local s6 = StationClickable:create("Shinjuku", 6, 800000)
+    --local a4 = AbilityClickable:create(stations[current_station].platforms[wagon_num].abilities["fence"], 4)
+    table.insert(self.station_clickables, s0)
+    table.insert(self.station_clickables, s1)
+    table.insert(self.station_clickables, s2)
+    table.insert(self.station_clickables, s3)
+    table.insert(self.station_clickables, s4)
+    table.insert(self.station_clickables, s5)
+    table.insert(self.station_clickables, s6)
 end
 
 function Gui:initClickables()

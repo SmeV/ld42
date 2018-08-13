@@ -52,11 +52,17 @@ end
 function Station:draw()
     animation_factor = self.timer/self.animation_time * 10 * self.graphic:getWidth()
     for i = 1, 10 do
+        --draw station
         love.graphics.draw(self.graphic, (i-1) * self.graphic:getWidth(), 0)
+        -- write Station Name
+        love.graphics.setColor(0,0,0)
+        love.graphics.print(self.name .. " Station", (i-1) * self.graphic:getWidth() + self.graphic:getWidth() / 3.0, self.graphic:getHeight()/2.0)
+        love.graphics.setColor(1,1,1)
         --draw platform
         love.graphics.draw(g_platform, (i-1) * self.graphic:getWidth(), 0)
     end
     if self.status == "stopping" then
+        -- next train timer
         love.graphics.push()
         love.graphics.setColor(255,0,0)
         love.graphics.rectangle("fill",pos + 50, 100, 1000 * (1.0 - self.timer / self.halt_time), 100)
