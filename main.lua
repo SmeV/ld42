@@ -10,6 +10,7 @@ function love.load()
     local w, h, m = love.window.getMode()
     scale_factor = math.min(w/1920, h/1080)
     
+    love.window.setTitle("TokyoPush!!!")
     -- load images
     g_shimbashi = love.graphics.newImage("images/shimbashi_subway.png")
     g_platform = love.graphics.newImage("images/platform.png")
