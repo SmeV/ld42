@@ -59,6 +59,9 @@ end
 
 function StatScreen:close()
     self:changeAnimationStatus("closed")
+    for sname, station in pairs(stations) do
+        station:newDay()
+    end
     self.isActive = false
 end
 

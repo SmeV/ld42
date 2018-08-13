@@ -334,10 +334,13 @@ function Platform:evalStats(person)
         return false
     elseif self.wagon["type"] == "woman" and person.gender == "male" then
         self.wagon["wronglyBoarded"] = self.wagon["wronglyBoarded"] + 1
+        self.wagon["boardedPeople"] = self.wagon["boardedPeople"] + 1
     elseif self.wagon["type"] == "lowac" and person.type ~= "tourist" then
         self.wagon["wronglyBoarded"] = self.wagon["wronglyBoarded"] + 1
+        self.wagon["boardedPeople"] = self.wagon["boardedPeople"] + 1
+    else
+        self.wagon["boardedPeople"] = self.wagon["boardedPeople"] + 1
     end
-    self.wagon["boardedPeople"] = self.wagon["boardedPeople"] + 1
     return true
 end
 
@@ -406,20 +409,32 @@ function Platform:initClickables()
             platform:personPushed(1,pushPower)
         end
     end
+    function platform.push1:hoveredCallback(x,y)
+        love.mouse.setCursor(hand_cursor)
+    end
     function platform.push2:clicked(button)
         if button == 1 then
             platform:personPushed(2,pushPower)
         end
+    end
+    function platform.push2:hoveredCallback(x,y)
+        love.mouse.setCursor(hand_cursor)
     end
     function platform.push3:clicked(button)
         if button == 1 then
             platform:personPushed(3,pushPower)
         end
     end
+    function platform.push3:hoveredCallback(x,y)
+        love.mouse.setCursor(hand_cursor)
+    end
     function platform.push4:clicked(button)
         if button == 1 then
             platform:personPushed(4,pushPower)
         end
+    end
+    function platform.push4:hoveredCallback(x,y)
+        love.mouse.setCursor(hand_cursor)
     end
     --[[ DEBUG DRAW
     function platform.push1:draw()
