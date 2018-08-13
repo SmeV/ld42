@@ -101,6 +101,7 @@ function Platform:drawWagon(animate_factor)
 
     -- label woman only and low ac cars on platfrom
     love.graphics.setColor(0,0,0)
+    love.graphics.setFont(fonts["46"])
     if self.number == 1 then
         love.graphics.print("From 6 to 9:30 Woman only",(self.number-1) * g_wagon:getWidth() + 100, 300+ g_wagon:getHeight() + 200)
         --love.graphics.print("XXXXXXXXXXXXXXXxxx",(self.number-1) * g_wagon:getWidth() + 100, 300+ g_wagon:getHeight() + 200)
@@ -172,7 +173,7 @@ function Platform:drawWagon(animate_factor)
     -- Minimap of current station
     --love.graphics.push()
     love.graphics.setColor(oldr, oldg, oldb)
-    love.graphics.setScissor(50, 50, 1000, 200)
+    love.graphics.setScissor(50*scale_factor, 50*scale_factor, 1000*scale_factor, 200*scale_factor)
     love.graphics.draw(g_platform, pos + (self.number-1) * g_platform:getWidth() * s +50, 150, 0, s, s)
     love.graphics.setColor(math.min(1,1*math.max(0,self.color_factor)),math.min(1,1*math.max(0,(1.0/self.color_factor))),0)
     love.graphics.circle("fill",pos + (self.number-1) * 100 + 50 + 50, 225, 15)

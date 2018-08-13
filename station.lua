@@ -57,6 +57,7 @@ function Station:draw()
         love.graphics.draw(self.graphic, (i-1) * self.graphic:getWidth(), 0)
         -- write Station Name
         love.graphics.setColor(0,0,0)
+        love.graphics.setFont(fonts["46"])
         love.graphics.print(self.name .. " Station", (i-1) * self.graphic:getWidth() + self.graphic:getWidth() / 3.0, self.graphic:getHeight()/2.0)
         love.graphics.setColor(1,1,1)
         --draw platform

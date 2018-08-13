@@ -39,6 +39,7 @@ function StatScreen:create(title, stats)
         else
             love.graphics.setColor(255,0,255)
         end
+        love.graphics.setFont(fonts["46"])
         love.graphics.printf("x", self.x + pos, self.y, self.width, "center")
         love.graphics.pop()
     end
@@ -93,6 +94,7 @@ function StatScreen:draw()
 
         love.graphics.push()
         love.graphics.setColor(0,0,0)
+        love.graphics.setFont(fonts["46"])
         love.graphics.printf(self.title, rectX, rectY + 100, self.graphics["width"], "center")
 
         local i = 0

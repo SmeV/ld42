@@ -45,7 +45,7 @@ function StationClickable:draw(tab)
     love.graphics.setColor(0,0,0)
     love.graphics.rectangle("line", self.clickable.x+pos, self.clickable.y, self.clickable.width, self.clickable.height)
 
-    love.graphics.setNewFont(20)
+    love.graphics.setFont(fonts["20"])
     if self.stationAvailable then
         love.graphics.printf(self.linkedStation, 1400+pos, self.clickable.y, self.clickable.width)
         love.graphics.printf("Cost: " .. self.cost, 1400+pos, self.clickable.y +25, self.clickable.width)
@@ -53,7 +53,7 @@ function StationClickable:draw(tab)
         love.graphics.printf(self.linkedStation .. " bought. Click here to visit station.", 1400+pos, self.clickable.y, self.clickable.width)
     end
     --love.graphics.printf("Cost: " .. (self.linkedStation.cost), 1400+pos, self.clickable.y+100, self.clickable.width, "right")
-    love.graphics.setNewFont(46)
+    love.graphics.setFont(fonts["46"])
 
 end
 

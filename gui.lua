@@ -65,6 +65,7 @@ function Gui:draw(num_people)
     end
 
     -- print current money and time
+    love.graphics.setFont(fonts["46"])
     love.graphics.setColor(0,0,0)
     love.graphics.print("Money " .. money, 1400 + pos, 50)
     love.graphics.print(string.format("time %02d:%02d", time_h, time_m), 1400+pos, 150)
@@ -186,6 +187,7 @@ function Gui:initClickables()
             --return
         end
         love.graphics.push()
+        love.graphics.setFont(fonts["46"])
         love.graphics.setColor(0.3,0.3,0.3)
         love.graphics.rectangle("fill", self.x + pos, self.y, self.width, self.height)
         love.graphics.setColor(0,0,0)
@@ -213,6 +215,7 @@ function Gui:initClickables()
             --return
         end
         love.graphics.push()
+        love.graphics.setFont(fonts["46"])
         love.graphics.setColor(0.3,0.3,0.3)
         love.graphics.rectangle("fill", self.x + pos, self.y, self.width, self.height)
         love.graphics.setColor(0,0,0)
@@ -234,6 +237,7 @@ function Gui:initClickables()
             love.graphics.rectangle("fill", 1400+pos, 300, 250, 100)
         end
         love.graphics.setColor(0,0,0)
+        love.graphics.setFont(fonts["46"])
         love.graphics.print("Abilities", 1400+pos+20, 320)
         love.graphics.rectangle("line", 1400+pos, 300, 250, 100)
     end
@@ -254,6 +258,7 @@ function Gui:initClickables()
             love.graphics.rectangle("fill", 1400+pos + 250, 300, 250, 100)
         end
         love.graphics.setColor(0,0,0)
+        love.graphics.setFont(fonts["46"])
         love.graphics.print("Stations", 1400+pos + 280, 320)
         love.graphics.rectangle("line", 1400+pos + 250, 300, 250, 100)
     end

@@ -6,8 +6,10 @@ require "statscreen"
 
 -- called once at startup, load resources here
 function love.load()
-    love.window.setMode(1920, 1080)
 
+    local w, h, m = love.window.getMode()
+    scale_factor = math.min(w/1920, h/1080)
+    
     -- load images
     g_shimbashi = love.graphics.newImage("images/shimbashi_subway.png")
     g_platform = love.graphics.newImage("images/platform.png")
@@ -31,9 +33,14 @@ function love.load()
     g_fence = love.graphics.newImage("images/fence.png")
     hand_cursor = love.mouse.newCursor("images/HandIcon_Open.png", 32, 32)
     hand_cursor_point = love.mouse.newCursor("images/HandIcon_pointing.png", 32, 32)
+    standard_cursor = love.mouse.getSystemCursor("arrow")
     --love.mouse.setCursor(hand_cursor)
 
-    love.graphics.setNewFont(46)
+    fonts = {}
+    fonts["20"] = love.graphics.setNewFont(20)
+    fonts["26"] = love.graphics.setNewFont(26)
+    fonts["30"] = love.graphics.setNewFont(30)
+    fonts["46"] = love.graphics.setNewFont(46)
     love.graphics.setColor(0,0,0)
     love.graphics.setBackgroundColor(255,255,255)
 
@@ -62,17 +69,15 @@ end
 
 -- called continuously, drawing happens here
 function love.draw()
+    love.graphics.scale(scale_factor)
     love.graphics.setColor(255,255,255)
     if mode=="title" then
         love.graphics.draw(g_title)
     end
-    --love.graphics.print("Hello World", 400, 300)
-    --love.graphics.scale(1920, 1080)
     if mode == "game" then 
         pos = (wagon_num - 1) * g_wagon:getWidth()
         love.graphics.translate(-pos, 0)
         stations[current_station]:draw()
-
 
         gui:draw(stations[current_station].platforms[wagon_num].num_people)
     end
@@ -105,12 +110,12 @@ function love.update(dt)
     for i, station in pairs(stations) do
         station:update(dt)
     end
-    --stations[current_station]:update(dt)
-
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
-    love.mouse.setCursor(love.mouse.getSystemCursor("arrow"))
+    x = x * 1.0/scale_factor
+    y = y * 1.0/scale_factor
+    love.mouse.setCursor(standard_cursor)
     if statistics.isActive then
         statistics:mousemoved(x,y,dx,dy,istouch)
         return
@@ -122,6 +127,8 @@ function love.mousemoved(x, y, dx, dy, istouch)
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
+    x = x * 1.0/scale_factor
+    y = y * 1.0/scale_factor
     if statistics.isActive then
         statistics:mousepressed(x,y,button,istouch, presses)
         return

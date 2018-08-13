@@ -8,6 +8,8 @@ function Clickable:create(x, y, width, height)
     clickable.y = y
     clickable.width = width
     clickable.height = height
+    clickable.widthScaled = width * scale_factor
+    clickable.heightScaled = height * scale_factor
     clickable.hovered = false
     clickable.fixed = false
 
@@ -21,6 +23,7 @@ function Clickable:mousepressed(x, y, button, istouch, presses)
     end
     if x >= self.x and x < self.x + self.width and y >= self.y and y < self.y + self.height then
         self:clicked(button, istouch, presses)
+        print('clicked')
     end
 end
 
