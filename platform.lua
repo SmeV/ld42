@@ -168,10 +168,6 @@ function Platform:draw(animate_factor)
         clickable:draw()
     end
 
-    -- draw humans
-    for i, line in pairs(self.lines) do
-        line:draw(((self.number-1)*5 + math.ceil(i/2)) * g_wagon:getWidth()/5 + 50 - 10 + i%2 * 100, g_platform:getHeight() * 0.68, i%2)
-    end
     
     -- Minimap of current station
     --love.graphics.push()
@@ -210,7 +206,15 @@ function Platform:draw(animate_factor)
     love.graphics.setScissor()
     --love.graphics.pop()
 
+    -- draw fence
+    if self.abilities["fence"].level > 0 then
+        love.graphics.draw(g_fence, (self.number-1) * g_wagon:getWidth() + 100, 300)
+    end
 
+    -- draw humans
+    for i, line in pairs(self.lines) do
+        line:draw(((self.number-1)*5 + math.ceil(i/2)) * g_wagon:getWidth()/5 + 50 - 10 + i%2 * 100, g_platform:getHeight() * 0.68, i%2)
+    end
 end
 
 function Platform:update(dt, modifiers)

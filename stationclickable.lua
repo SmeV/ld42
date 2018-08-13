@@ -28,6 +28,7 @@ function StationClickable:buyStation()
         self.stationAvailable = false
     elseif not self.stationAvailable then
         current_station = self.linkedStation
+        gui:switchStation(current_station)
     end
 end
 
