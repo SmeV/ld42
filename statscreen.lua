@@ -9,6 +9,7 @@ function StatScreen:create(title, stats)
     statscreen.title = title
     statscreen.stats = stats
     statscreen.isActive = false
+    statscreen.fixed = true
 
     statscreen.animation = {}
     statscreen.animation["duration"] = 0.2
@@ -23,6 +24,7 @@ function StatScreen:create(title, stats)
     statscreen.graphics["height"] = window_height - 2 * statscreen.graphics["y"]
 
     local closeButton = Clickable:create(statscreen.graphics["x"] + statscreen.graphics["width"] - 55, statscreen.graphics["y"] + 5, 50, 50)
+    closeButton.fixed = true
     statscreen.all_buttons = {}
     statscreen.all_buttons["close"] = closeButton
     function closeButton:clicked()
@@ -31,13 +33,13 @@ function StatScreen:create(title, stats)
     function closeButton:draw()
         love.graphics.push()
         love.graphics.setColor(0,0,0)
-        love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+        love.graphics.rectangle("fill", self.x + pos, self.y, self.width, self.height)
         if statscreen.isActive then
             love.graphics.setColor(255,255,255)
         else
             love.graphics.setColor(255,0,255)
         end
-        love.graphics.printf("x", self.x, self.y, self.width, "center")
+        love.graphics.printf("x", self.x + pos, self.y, self.width, "center")
         love.graphics.pop()
     end
     return statscreen
@@ -74,17 +76,25 @@ function StatScreen:draw()
         local rectanglePercent = self.animation["timer"] / self.animation["duration"]
         local rectX = self.graphics["x"] + self.graphics["width"]/2.0 - rectanglePercent * (self.graphics["width"]/2.0)
         local rectY = self.graphics["y"] + self.graphics["height"]/2.0 - rectanglePercent * (self.graphics["height"]/2.0)
+        if self.fixed then
+            rectX = rectX + pos
+        end
         rectangleAppear({255,255,0}, {255,255,255}, rectX, rectY, self.graphics["width"] * rectanglePercent, self.graphics["height"] * rectanglePercent)
     elseif self.animation["status"] == "opened" then
-        rectangleAppear({255,255,0}, {255,255,255}, self.graphics["x"], self.graphics["y"], self.graphics["width"], self.graphics["height"])
+        local rectX = self.graphics["x"]
+        local rectY = self.graphics["y"]
+        if self.fixed then
+            rectX = rectX + pos
+        end
+        rectangleAppear({255,255,0}, {255,255,255}, rectX, rectY, self.graphics["width"], self.graphics["height"])
 
         love.graphics.push()
         love.graphics.setColor(0,0,0)
-        love.graphics.printf(self.title, self.graphics["x"], self.graphics["y"] + 100, self.graphics["width"], "center")
+        love.graphics.printf(self.title, rectX, rectY + 100, self.graphics["width"], "center")
 
         local i = 0
         for name, stat in pairs(self.stats) do
-            love.graphics.printf(name..": "..stat, self.graphics["x"] + 100, self.graphics["y"] + 200 + 100 * i, self.graphics["width"] - 200)
+            love.graphics.printf(name..": "..stat, rectX + 100, rectY + 200 + 100 * i, self.graphics["width"] - 200)
             i = i+1
         end
         for i, clickable in pairs(self.all_buttons) do

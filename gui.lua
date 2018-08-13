@@ -9,6 +9,7 @@ function Gui:create()
 
     gui.current_tab = 1
     gui.scrollPosition = 1
+    gui.length = 0
  
     gui.push_clickables = {}   
     gui:initClickables()
@@ -35,16 +36,16 @@ function Gui:draw(num_people)
 
     -- menu
     love.graphics.setColor(255,255,255)
-    love.graphics.rectangle("fill", 1400+pos, 400, 500, 600)
+    love.graphics.rectangle("fill", 1400+pos, 400, 450, 600)
     love.graphics.setColor(0,0,0)
-    love.graphics.rectangle("line", 1400+pos, 400, 500, 600)
+    love.graphics.rectangle("line", 1400+pos, 400, 450, 600)
     love.graphics.setColor(oldr, oldg, oldb)
     
-    self.tab1_clickable:draw()
-    self.tab2_clickable:draw()
-
     for i, abiclick in pairs(self.ability_clickables) do 
         abiclick:draw(self.scrollPosition, self.current_tab)
+    end
+    for i, click in pairs(self.push_clickables) do
+        click:draw()
     end
 end
 
@@ -67,14 +68,35 @@ function Gui:mousepressed(x, y, button, istouch, presses)
 end
 
 function Gui:initAbilityClickables()
-    local a1 = AbilityClickable:create(stations[current_station].platforms[wagon_num].abilities["boardingSpeed"], 1)
-    local a2 = AbilityClickable:create(stations[current_station].platforms[wagon_num].abilities["maxBoarding"], 2)
-    local a3 = AbilityClickable:create(stations[current_station].platforms[wagon_num].abilities["employees"], 3)
-    --local a4 = AbilityClickable:create(stations[current_station].platforms[wagon_num].abilities["fence"], 4)
-    table.insert(self.ability_clickables, a1)
-    table.insert(self.ability_clickables, a2)
-    table.insert(self.ability_clickables, a3)
-    --table.insert(self.ability_clickables, a4)
+    local g1 = AbilityClickable:create(globalAbilities["Push"], self.length + 1) self.length = self.length + 1
+    local p1 = AbilityClickable:create(stations[current_station].abilities["frequency"], 2)
+    local p2 = AbilityClickable:create(stations[current_station].abilities["campaign"], 3)
+    local l1 = AbilityClickable:create(stations[current_station].platforms[wagon_num].abilities["boardingSpeed"], 4)
+    local l2 = AbilityClickable:create(stations[current_station].platforms[wagon_num].abilities["maxBoarding"], 5)
+    local l3 = AbilityClickable:create(stations[current_station].platforms[wagon_num].abilities["employees"], 6)
+    local l4 = AbilityClickable:create(stations[current_station].platforms[wagon_num].abilities["fence"], 7)
+    table.insert(self.ability_clickables, g1)
+    table.insert(self.ability_clickables, p1)
+    table.insert(self.ability_clickables, p2)
+    table.insert(self.ability_clickables, l1)
+    table.insert(self.ability_clickables, l2)
+    table.insert(self.ability_clickables, l3)
+    table.insert(self.ability_clickables, l4)
+
+    self.length = 7
+end
+
+function Gui:switchStation(num)
+    self.ability_clickables[2].linkedAbility = stations[num].abilities["frequency"]
+    self.ability_clickables[3].linkedAbility = stations[num].abilities["campaign"]
+    self:switchPlatform(wagon_num)
+end
+
+function Gui:switchPlatform(num)
+    self.ability_clickables[4].linkedAbility = stations[current_station].platforms[num].abilities["boardingSpeed"]
+    self.ability_clickables[5].linkedAbility = stations[current_station].platforms[num].abilities["maxBoarding"]
+    self.ability_clickables[6].linkedAbility = stations[current_station].platforms[num].abilities["employees"]
+    self.ability_clickables[7].linkedAbility = stations[current_station].platforms[num].abilities["fence"]
 end
 
 function Gui:initClickables()
@@ -83,6 +105,50 @@ function Gui:initClickables()
     gui.tab2_clickable = Clickable:create(1400+250,300, 250, 100)
     gui.tab1_clickable.fixed = true
     gui.tab2_clickable.fixed = true
+
+    local scrollUpClickable = Clickable:create(1850, 400, 50, 50)
+    scrollUpClickable.fixed = true
+    function scrollUpClickable:clicked()
+        if gui.scrollPosition > 1 then
+            gui.scrollPosition = gui.scrollPosition - 1
+            for i, abiclick in pairs(gui.ability_clickables) do
+                abiclick:updatePosition(gui.scrollPosition)
+            end
+        end
+    end
+    function scrollUpClickable:draw()
+        if gui.scrollPosition <= 1 then
+            --return
+        end
+        love.graphics.push()
+        love.graphics.setColor(0,0,0)
+        love.graphics.rectangle("fill", self.x + pos, self.y, self.width, self.height)
+        love.graphics.setColor(1.0,1.0,1.0)
+        love.graphics.printf("^", self.x + pos, self.y, self.width, "center")
+        love.graphics.pop()
+    end
+
+    local scrollDownClickable = Clickable:create(1850, 950, 50, 50)
+    scrollDownClickable.fixed = true
+    function scrollDownClickable:clicked()
+        if gui.scrollPosition < gui.length - 2 then
+            gui.scrollPosition = gui.scrollPosition + 1
+            for i, abiclick in pairs(gui.ability_clickables) do
+                abiclick:updatePosition(gui.scrollPosition)
+            end
+        end
+    end
+    function scrollDownClickable:draw()
+        if gui.scrollPosition >= gui.length - 2 then
+            --return
+        end
+        love.graphics.push()
+        love.graphics.setColor(0,0,0)
+        love.graphics.rectangle("fill", self.x + pos, self.y, self.width, self.height)
+        love.graphics.setColor(1.0,1.0,1.0)
+        love.graphics.printf("v", self.x + pos, self.y, self.width, "center")
+        love.graphics.pop()
+    end
 
     function gui.tab1_clickable:draw()
         if gui.current_tab == 1 then
@@ -114,4 +180,6 @@ function Gui:initClickables()
 
     table.insert(gui.push_clickables, gui.tab1_clickable)
     table.insert(gui.push_clickables, gui.tab2_clickable)
+    table.insert(gui.push_clickables, scrollDownClickable)
+    table.insert(gui.push_clickables, scrollUpClickable)
 end

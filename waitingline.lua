@@ -17,6 +17,13 @@ function WaitingLine:push(human)
     self[first] = human
 end
 
+function WaitingLine:pushFront(human)
+    local last = self.last + 1
+    self.last = last
+    self[last] = human
+end
+
+
 function WaitingLine:pop()
     local last = self.last
     if self.first > self.last then return nil end

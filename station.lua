@@ -18,6 +18,8 @@ function Station:create(name, graphic, modifier)
     station.modifier = modifier
     station.num_people = 0
 
+    station.smartPeople = 0.0
+
     station.stats = {}
     station.stats["pushedPeople"] = 0
     station.stats["boardedPeople"] = 0
@@ -37,8 +39,7 @@ function Station:create(name, graphic, modifier)
     station.statsDaily["money"] = 0
 
     station.abilities = {}
-    station.abilities["frequency"] = Ability:create("Frequency")
-    station.abilities["campaign"] = Ability:create("Campaign")
+    station:initAbilities()
 
     -- "empty" "entering" "stopping" "leaving"
     station.status = "entering"
@@ -84,7 +85,7 @@ function Station:update(dt)
     end
 
     for i, plat in pairs(self.platforms) do
-        plat:update(dt, self.modifier, self.status)
+        plat:update(dt, self.modifier)
     end
 end
 
@@ -176,4 +177,23 @@ function Station:changeStatus(status)
     for i, plaform in pairs(self.platforms) do
         plaform:changeStatus(status)
     end
+end
+
+function Station:initAbilities()
+    local station = self
+    local frequency = Ability:create("Frequency", "")
+    function frequency:upgraded()
+        station.animation_time = 10 * math.pow(0.95, self.level)
+        station.wait_time = 10 * math.pow(0.95, self.level)
+        station.halt_time = 10 * math.pow(0.99, self.level)
+    end
+    station.abilities["frequency"] = frequency
+
+    local campaign = Ability:create("Campaign", "")
+    function campaign:upgraded()
+        for i, plat in pairs(station.platforms) do
+            plat.smartness = 1.0 - math.pow(0.9, self.level)
+        end
+    end
+    station.abilities["campaign"] = campaign
 end

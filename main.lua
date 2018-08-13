@@ -35,6 +35,8 @@ function love.load()
 
 
     -- initialize vars
+    globalAbilities = {}
+    initGlobalAbilities()
     mode = "title"
     level ="shimbashi"
     wagon_num = 1
@@ -47,11 +49,10 @@ function love.load()
     time_s = 5* 3600
     money = 1000
     pos = 0
+    pushPower = 1.0
 
-    globalAbilityLevels = {}
-    globalAbilityLevels["Push"] = 0
 
-    statistics = StatScreen:create(current_station, stations[current_station].stats)
+    statistics = StatScreen:create(current_station, stations[current_station].statsDaily)
     --statistics:changeAnimationStatus("bla")
 end
 
@@ -83,7 +84,7 @@ function love.update(dt)
         return
     end
     time_s =  time_s + 288 * dt
-    if time_s >= 5*3600 + 10800 then
+    if time_s >= 24*3600 then
         for sname, station in pairs(stations) do
             station:dayEnd()
             station:newDay()
@@ -130,51 +131,73 @@ function love.keypressed(key)
 
     if mode == "game" then
         if key == "left" then 
-            wagon_num = math.max(wagon_num - 1, 1)
+            switchPlatform(math.max(wagon_num - 1, 1))
         end
 
         if key == "right" then
-            wagon_num = math.min(wagon_num + 1, 10)
+            switchPlatform(math.min(wagon_num + 1, 10))
         end
 
         if key == "1" then
-            wagon_num = 1
+            switchPlatform(1)
         end
 
         if key == "2" then
-            wagon_num = 2
+            switchPlatform(2)
         end
 
         if key == "3" then
             wagon_num = 3
+            switchPlatform(3)
         end
 
         if key == "4" then
             wagon_num = 4
+            switchPlatform(4)
         end
 
         if key == "5" then
             wagon_num = 5
+            switchPlatform(5)
         end
 
         if key == "6" then
             wagon_num = 6
+            switchPlatform(6)
         end
 
         if key == "7" then
             wagon_num = 7
+            switchPlatform(7)
         end
 
         if key == "8" then
             wagon_num = 8
+            switchPlatform(8)
         end
 
         if key == "9" then
             wagon_num = 9
+            switchPlatform(9)
         end
 
         if key == "0" then
-            wagon_num = 10
+            switchPlatform(10)
         end
     end
+end
+
+function switchPlatform(num)
+    wagon_num = num
+    gui:switchPlatform(num)
+end
+
+function initGlobalAbilities()
+    local push = Ability:create("Push", "")
+
+    function push:upgraded()
+        pushPower = math.pow(1.50, self.level)
+    end
+    globalAbilities["Push"] = push
+
 end

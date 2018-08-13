@@ -8,7 +8,7 @@ function AbilityClickable:create(ability, listPosition)
     setmetatable(abilityClickable, AbilityClickable)
 
     abilityClickable.linkedAbility = ability
-    abilityClickable.clickable = Clickable:create(1400, -500, 500, 200) -- init on unclickable region?
+    abilityClickable.clickable = Clickable:create(1400, -500, 450, 200) -- init on unclickable region?
     abilityClickable.clickable.fixed = true
     function abilityClickable.clickable:clicked()
         abilityClickable:upgradeAbility()

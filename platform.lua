@@ -59,6 +59,7 @@ function Platform:create(num)
     platform.pushPowerNeeded = 1.0
     platform.currentPower = 0.0
     platform.powerSaver = 0.0
+    platform.smartness = 0.0
 
     -- update timer every 1 sec
     platform.custom_dt = 0
@@ -212,11 +213,11 @@ function Platform:draw(animate_factor)
 
 end
 
-function Platform:update(dt, modifier, status)
+function Platform:update(dt, modifiers)
     self.custom_dt = self.custom_dt + dt
     self.boardingTimer = self.boardingTimer + dt
     if self.custom_dt > 1 then
-        self:peopleAdded(modifier)
+        self:peopleAdded(modifiers)
         self:refillLines()
         self:employeesPush()
         self.custom_dt = 0
@@ -266,9 +267,9 @@ function Platform:refillLines()
         local combinedSize = self.lines[i*2 + 0]:getSize() + self.lines[i*2 - 1]:getSize()
         while combinedSize < 10 and combinedSize < self.people[i] do
             if self.lines[i*2 + 0]:getSize() <= self.lines[i*2 - 1]:getSize() then
-                self.lines[i*2 + 0]:push(Human:create())
+                self.lines[i*2 + 0]:push(self:getHuman())
             else
-                self.lines[i*2 - 1]:push(Human:create())
+                self.lines[i*2 - 1]:push(self:getHuman())
             end
             combinedSize = combinedSize + 1
         end
@@ -300,31 +301,40 @@ function Platform:personPushed(i, power)
         local pushed = self.lines[i * 2 - self.doormodulos[i] % 2]:pop()
         if pushed == nil then
             self.doormodulos[i] = self.doormodulos[i] % 2 + 1
-            self.currentPower = self.currentPower * self.powerSaver
+            --self.currentPower = self.currentPower * self.powerSaver
+            self.currentPower = 0
             break
         else
-            self:evalStats(pushed)
-            local combinedSize = self.lines[i*2 + 0]:getSize() + self.lines[i*2 - 1]:getSize()
-            self.people[i] = self.people[i] - 1
-            if self.people[i] > combinedSize then
-                self.lines[i * 2 - self.doormodulos[i] % 2]:push(Human:create())
+            if self:evalStats(pushed) then
+                local combinedSize = self.lines[i*2 + 0]:getSize() + self.lines[i*2 - 1]:getSize()
+                self.people[i] = self.people[i] - 1
+                if self.people[i] > combinedSize then
+                    self.lines[i * 2 - self.doormodulos[i] % 2]:push(self:getHuman())
+                end
+                self.wagon["fillStatus"] = self.wagon["fillStatus"] + 1.0 / self.wagon["size"]
+                self.currentPower = self.currentPower - self.pushPowerNeeded
+                self.doormodulos[i] = self.doormodulos[i] % 2 + 1
+            else
+                self.lines[i * 2 - self.doormodulos[i] % 2]:pushFront(pushed)
+                break
             end
-            self.wagon["fillStatus"] = self.wagon["fillStatus"] + 1.0 / self.wagon["size"]
-            self.currentPower = self.currentPower - self.pushPowerNeeded
-            self.doormodulos[i] = self.doormodulos[i] % 2 + 1
         end
     end
 end
 
 function Platform:evalStats(person)
-    if self.wagon["status"] ~= "stopping" then
+    if self.wagon["status"] ~= "stopping" and self.abilities["fence"].level == 0 then
         self.statsDaily["peopleKilled"] = self.statsDaily["peopleKilled"] + 1
+    elseif self.wagon["status"] ~= "stopping" and self.abilities["fence"].level >= 0 then
+        self.currentPower = self.currentPower * self.powerSaver
+        return false
     elseif self.wagon["type"] == "woman" and person.gender == "male" then
         self.wagon["wronglyBoarded"] = self.wagon["wronglyBoarded"] + 1
     elseif self.wagon["type"] == "lowac" and person.type ~= "tourist" then
         self.wagon["wronglyBoarded"] = self.wagon["wronglyBoarded"] + 1
     end
     self.wagon["boardedPeople"] = self.wagon["boardedPeople"] + 1
+    return true
 end
 
 function Platform:evalWagon()
@@ -389,22 +399,22 @@ function Platform:initClickables()
     platform.push1.numclicked = 0
     function platform.push1:clicked(button)
         if button == 1 then
-            platform:personPushed(1,1)
+            platform:personPushed(1,pushPower)
         end
     end
     function platform.push2:clicked(button)
         if button == 1 then
-            platform:personPushed(2,1)
+            platform:personPushed(2,pushPower)
         end
     end
     function platform.push3:clicked(button)
         if button == 1 then
-            platform:personPushed(3,1)
+            platform:personPushed(3,pushPower)
         end
     end
     function platform.push4:clicked(button)
         if button == 1 then
-            platform:personPushed(4,1)
+            platform:personPushed(4,pushPower)
         end
     end
     --[[ DEBUG DRAW
@@ -468,4 +478,20 @@ end
 
 function Platform:changeStatus(status)
     self.wagon["status"] = status
+end
+
+function Platform:getHuman()
+    local rng = math.random()
+    local stupid = true
+    if rng < self.smartness then stupid = false end
+    if stupid then return Human:create() 
+    else 
+        if self.wagon["type"] == "woman" then
+            return Human:create("female")
+        elseif self.wagon["type"] == "lowac" then
+            return Human:create(nil,"tourist")
+        else
+            return Human:create()
+        end
+    end 
 end

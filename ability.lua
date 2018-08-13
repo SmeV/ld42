@@ -17,7 +17,7 @@ end
 
 function Ability:upgrade()
     self.level = self.level + 1
-    self.cost = self.initCost * math.pow(self.costIncrease, self.level)
+    self.cost = math.ceil(self.initCost * math.pow(self.costIncrease, self.level))
     self:upgraded()
 end
 
