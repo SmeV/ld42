@@ -44,13 +44,13 @@ function love.load()
     level ="shimbashi"
     wagon_num = 1
     stations = {}
-    stations["shimbashi"] = Station:create("shimbashi", g_shimbashi, 1)
+    stations["shimbashi"] = Station:create("Shimbashi", g_shimbashi, 1)
     current_station = "shimbashi"
     gui = Gui:create()
     time_h = 5
     time_m = 0
     time_s = 5* 3600
-    money = 1000
+    money = 1000000
     pos = 0
     pushPower = 1.0
 
@@ -98,7 +98,11 @@ function love.update(dt)
     end
     time_m = math.floor(time_s/60) % 60 
     time_h = math.floor(time_s/3600) % 24
-    stations[current_station]:update(dt)
+
+    for i, station in pairs(stations) do
+        station:update(dt)
+    end
+    --stations[current_station]:update(dt)
 
 end
 

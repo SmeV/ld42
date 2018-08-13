@@ -1,5 +1,7 @@
 require "button"
 require "abilityclickable"
+require "stationclickable"
+
 Gui = {}
 Gui.__index = Gui
 
@@ -17,9 +19,13 @@ function Gui:create()
     gui.ability_clickables = {}
     gui:initAbilityClickables()
 
+    gui.station_clickables = {}
+    gui:initStationClickables()
+
     for i, abiclick in pairs(gui.ability_clickables) do
         abiclick:updatePosition(gui.scrollPosition)
     end
+
     return gui
 end
 
@@ -27,6 +33,36 @@ function Gui:draw(num_people)
     local oldr, oldg, oldb = love.graphics.getColor()
     -- roadmap
     love.graphics.draw(g_stations_map, 1100 + pos, 50)
+    love.graphics.setColor(0,0.8,0)
+    if current_station == "shimbashi" then
+        love.graphics.circle("fill",1310+pos, 245, 15)
+        love.graphics.setColor(0,0,0)
+        love.graphics.circle("line",1310+pos, 245, 15)
+    elseif current_station == "Tokyo" then
+        love.graphics.circle("fill",1335+pos, 205, 15)
+        love.graphics.setColor(0,0,0)
+        love.graphics.circle("line",1335+pos, 205, 15)
+    elseif current_station == "Takadanobaba" then
+        love.graphics.circle("fill",1125+pos, 125, 15)
+        love.graphics.setColor(0,0,0)
+        love.graphics.circle("line",1125+pos, 125, 15)
+    elseif current_station == "Shinagawa" then
+        love.graphics.circle("fill",1180+pos, 285, 15)
+        love.graphics.setColor(0,0,0)
+        love.graphics.circle("line",1180+pos, 285, 15)
+    elseif current_station == "Shinjuku" then
+        love.graphics.circle("fill",1115+pos, 165, 15)
+        love.graphics.setColor(0,0,0)
+        love.graphics.circle("line",1115+pos, 165, 15)
+    elseif current_station == "Ikebukuro" then 
+        love.graphics.circle("fill",1145+pos, 90, 15)
+        love.graphics.setColor(0,0,0)
+        love.graphics.circle("line",1145+pos, 90, 15)
+    elseif current_station == "Shibuya" then
+        love.graphics.circle("fill",1120+pos, 220, 15)
+        love.graphics.setColor(0,0,0)
+        love.graphics.circle("line",1120+pos, 220, 15)
+    end
 
     -- print current money and time
     love.graphics.setColor(0,0,0)
@@ -47,6 +83,10 @@ function Gui:draw(num_people)
     for i, click in pairs(self.push_clickables) do
         click:draw()
     end
+
+    for i, sclick in pairs(self.station_clickables) do 
+        sclick:draw(self.current_tab)
+    end
 end
 
 function Gui:mousemoved(x, y, dx, dy, istouch)
@@ -56,6 +96,9 @@ function Gui:mousemoved(x, y, dx, dy, istouch)
     for i, abiclick in pairs(self.ability_clickables) do
         abiclick:mousemoved(x, y, dx, dy, istouch, self.scrollPosition, self.current_tab)
     end
+    for i, sclick in pairs(self.station_clickables) do
+        sclick:mousemoved(x, y, dx, dy, istouch, self.current_tab)
+    end
 end
 
 function Gui:mousepressed(x, y, button, istouch, presses)
@@ -64,6 +107,9 @@ function Gui:mousepressed(x, y, button, istouch, presses)
     end
     for i, abiclick in pairs(self.ability_clickables) do
         abiclick:mousepressed(x, y, button, istouch, presses, self.scrollPosition, self.current_tab)
+    end
+    for i, sclick in pairs(self.station_clickables) do
+        sclick:mousepressed(x, y, button, istouch, presses, self.current_tab)
     end
 end
 
@@ -97,6 +143,25 @@ function Gui:switchPlatform(num)
     self.ability_clickables[5].linkedAbility = stations[current_station].platforms[num].abilities["maxBoarding"]
     self.ability_clickables[6].linkedAbility = stations[current_station].platforms[num].abilities["employees"]
     self.ability_clickables[7].linkedAbility = stations[current_station].platforms[num].abilities["fence"]
+end
+
+function Gui:initStationClickables()
+    local s0 = StationClickable:create("shimbashi", 0, 0)
+    s0.stationAvailable = false
+    local s1 = StationClickable:create("Takadanobaba", 1, 10000)
+    local s2 = StationClickable:create("Shinagawa", 2, 30000)
+    local s3 = StationClickable:create("Tokyo", 3, 50000)
+    local s4 = StationClickable:create("Shibuya", 4, 90000)
+    local s5 = StationClickable:create("Ikebukuro", 5, 18000)
+    local s6 = StationClickable:create("Shinjuku", 6, 800000)
+    --local a4 = AbilityClickable:create(stations[current_station].platforms[wagon_num].abilities["fence"], 4)
+    table.insert(self.station_clickables, s0)
+    table.insert(self.station_clickables, s1)
+    table.insert(self.station_clickables, s2)
+    table.insert(self.station_clickables, s3)
+    table.insert(self.station_clickables, s4)
+    table.insert(self.station_clickables, s5)
+    table.insert(self.station_clickables, s6)
 end
 
 function Gui:initClickables()
