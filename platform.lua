@@ -235,7 +235,7 @@ function Platform:update(dt, modifiers)
         self.boardingTimer = 0.0
     end
 
-    if status ~= "stopping" then
+    if self.wagon["status"] == "waiting" then
         self.wagon["fillStatus"] = 0.0
     end
     self.pushPowerNeeded = 1.0 / (1.0 / (1.0 + self.wagon["fillStatus"]))

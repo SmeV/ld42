@@ -186,8 +186,10 @@ function Gui:initClickables()
             --return
         end
         love.graphics.push()
-        love.graphics.setColor(0,0,0)
+        love.graphics.setColor(0.3,0.3,0.3)
         love.graphics.rectangle("fill", self.x + pos, self.y, self.width, self.height)
+        love.graphics.setColor(0,0,0)
+        love.graphics.rectangle("line", self.x + pos, self.y, self.width, self.height)
         love.graphics.setColor(1.0,1.0,1.0)
         love.graphics.printf("^", self.x + pos, self.y, self.width, "center")
         love.graphics.pop()
@@ -208,8 +210,10 @@ function Gui:initClickables()
             --return
         end
         love.graphics.push()
-        love.graphics.setColor(0,0,0)
+        love.graphics.setColor(0.3,0.3,0.3)
         love.graphics.rectangle("fill", self.x + pos, self.y, self.width, self.height)
+        love.graphics.setColor(0,0,0)
+        love.graphics.rectangle("line", self.x + pos, self.y, self.width, self.height)
         love.graphics.setColor(1.0,1.0,1.0)
         love.graphics.printf("v", self.x + pos, self.y, self.width, "center")
         love.graphics.pop()
@@ -217,12 +221,15 @@ function Gui:initClickables()
 
     function gui.tab1_clickable:draw()
         if gui.current_tab == 1 then
-            love.graphics.setColor(255,0,255)
-        love.graphics.rectangle("fill", 1400+pos, 300, 250, 100)
+            love.graphics.setColor(1,1,1)
+            love.graphics.rectangle("fill", 1400+pos, 300, 250, 100)
         else 
-            love.graphics.setColor(255,0,255)
-        love.graphics.rectangle("line", 1400+pos, 300, 250, 100)
+            love.graphics.setColor(0.8,0.8,0.8)
+            love.graphics.rectangle("fill", 1400+pos, 300, 250, 100)
         end
+        love.graphics.setColor(0,0,0)
+        love.graphics.print("Abilities", 1400+pos+20, 320)
+        love.graphics.rectangle("line", 1400+pos, 300, 250, 100)
     end
 
     function gui.tab1_clickable:clicked()
@@ -231,12 +238,15 @@ function Gui:initClickables()
 
     function gui.tab2_clickable:draw()
         if gui.current_tab == 2 then
-            love.graphics.setColor(0,0,0)
-        love.graphics.rectangle("fill", 1400+pos + 250, 300, 250, 100)
+            love.graphics.setColor(1,1,1)
+            love.graphics.rectangle("fill", 1400+pos + 250, 300, 250, 100)
         else 
-            love.graphics.setColor(0,0,0)
-        love.graphics.rectangle("line", 1400+pos + 250, 300, 250, 100)
+            love.graphics.setColor(0.8,0.8,0.8)
+            love.graphics.rectangle("fill", 1400+pos + 250, 300, 250, 100)
         end
+        love.graphics.setColor(0,0,0)
+        love.graphics.print("Stations", 1400+pos + 280, 320)
+        love.graphics.rectangle("line", 1400+pos + 250, 300, 250, 100)
     end
 
     function gui.tab2_clickable:clicked()
