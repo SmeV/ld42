@@ -95,7 +95,7 @@ function Platform:create(num)
     return platform
 end
 
-function Platform:draw(animate_factor)
+function Platform:drawWagon(animate_factor)
     local s = 100.0/1250.0
     local oldr, oldg, oldb = love.graphics.getColor()
 
@@ -205,7 +205,9 @@ function Platform:draw(animate_factor)
     end
     love.graphics.setScissor()
     --love.graphics.pop()
+end
 
+function Platform:drawPlatform(animate_factor)
     -- draw fence
     if self.abilities["fence"].level > 0 then
         love.graphics.draw(g_fence, (self.number-1) * g_wagon:getWidth() + 100, 300)
