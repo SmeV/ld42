@@ -29,8 +29,8 @@ function love.load()
     g_window3= love.graphics.newImage("images/w_3.png")
     g_window4= love.graphics.newImage("images/w_4.png")
     g_openHand = love.graphics.newImage("images/HandIcon_Open.png")
-    hand_cursor = love.mouse.newCursor("images/HandIcon_Open.png", 612, 612)
-    love.mouse.setCursor(hand_cursor)
+    hand_cursor = love.mouse.newCursor("images/HandIcon_Open.png", 32, 32)
+    --love.mouse.setCursor(hand_cursor)
 
     love.graphics.setNewFont(46)
     love.graphics.setColor(0,0,0)
@@ -88,11 +88,10 @@ function love.update(dt)
     end
     time_s =  time_s + 288 * dt
     if time_s >= 24*3600 then
+        statistics:open()
         for sname, station in pairs(stations) do
             station:dayEnd()
-            station:newDay()
         end
-        statistics:open()
 
         time_s = 5 * 3600
     end
@@ -107,6 +106,7 @@ function love.update(dt)
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
+    love.mouse.setCursor(love.mouse.getSystemCursor("arrow"))
     if statistics.isActive then
         statistics:mousemoved(x,y,dx,dy,istouch)
         return

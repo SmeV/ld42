@@ -29,13 +29,25 @@ function Clickable:mousemoved(x,y, dx, dy, istouch)
         x = x + pos
     end
     if x >= self.x and x < self.x + self.width and y >= self.y and y < self.y + self.height then
+        if not self.hovered then self:hover(x,y) end
         self.hovered = true
+        self:hoveredCallback(x,y)
     else
+        if self.hovered then self:unhover(x,y) end
         self.hovered = false
     end
 end
 
-function Clickable:clicked(button, istouch, presses)
+function Clickable:hoveredCallback(x,y)
+end
+
+function Clickable:hover(x, y)
+end
+
+function Clickable:unhover(x,y)
+end
+
+function Clickable:clicked(button, istouch, presses, x, y)
 end
 
 function Clickable:draw()
