@@ -8,7 +8,7 @@ function StationClickable:create(station, listPosition, cost)
     setmetatable(stationClickable, StationClickable)
 
     stationClickable.linkedStation = station
-    stationClickable.clickable = Clickable:create(1400, 400 + 50 * listPosition, 500, 50)
+    stationClickable.clickable = Clickable:create(1400, 400 + 50 * listPosition, 450, 50)
     stationClickable.clickable.fixed = true
     stationClickable.listPosition = listPosition
     stationClickable.stationAvailable = true
@@ -28,6 +28,7 @@ function StationClickable:buyStation()
         self.stationAvailable = false
     elseif not self.stationAvailable then
         current_station = self.linkedStation
+        gui:switchStation(current_station)
     end
 end
 
@@ -48,7 +49,7 @@ function StationClickable:draw(tab)
     if self.stationAvailable then
         love.graphics.printf(self.linkedStation .. "     Cost: " .. self.cost, 1400+pos, self.clickable.y, self.clickable.width)
     else
-        love.graphics.printf(self.linkedStation .. " bought.", 1400+pos, self.clickable.y, self.clickable.width)
+        love.graphics.printf(self.linkedStation .. " bought. Click here to visit station.", 1400+pos, self.clickable.y, self.clickable.width)
     end
     --love.graphics.printf("Cost: " .. (self.linkedStation.cost), 1400+pos, self.clickable.y+100, self.clickable.width, "right")
     love.graphics.setNewFont(46)
