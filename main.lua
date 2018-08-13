@@ -201,7 +201,7 @@ function switchPlatform(num)
 end
 
 function initGlobalAbilities()
-    local push = Ability:create("Push", "")
+    local push = Ability:create("Push", "Increase push power to push more people into a cart at once.")
 
     function push:upgraded()
         pushPower = math.pow(1.50, self.level)

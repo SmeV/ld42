@@ -34,8 +34,12 @@ function AbilityClickable:draw(scrollPosition, tab)
     love.graphics.setColor(0,0,0)
     love.graphics.rectangle("line", 1400+pos, self.clickable.y, self.clickable.width, self.clickable.height)
 
+    love.graphics.setNewFont(30)
     love.graphics.printf(self.linkedAbility.name .. " Lvl. " .. (self.linkedAbility.level + 1), 1400+pos, self.clickable.y, self.clickable.width)
-    love.graphics.printf("Cost: " .. (self.linkedAbility.cost), 1400+pos, self.clickable.y+100, self.clickable.width, "right")
+    love.graphics.setNewFont(26)
+    love.graphics.printf(self.linkedAbility.explanation, 1400+pos, self.clickable.y +36, self.clickable.width)
+    love.graphics.printf("Cost: " .. (self.linkedAbility.cost), 1400+pos, self.clickable.y+150, self.clickable.width, "right")
+    love.graphics.setNewFont(46)
 
 end
 

@@ -187,7 +187,7 @@ end
 
 function Station:initAbilities()
     local station = self
-    local frequency = Ability:create("Frequency", "")
+    local frequency = Ability:create("Frequency", "The train frequency will be increased.")
     function frequency:upgraded()
         station.animation_time = 10 * math.pow(0.95, self.level)
         station.wait_time = 10 * math.pow(0.95, self.level)
@@ -195,7 +195,7 @@ function Station:initAbilities()
     end
     station.abilities["frequency"] = frequency
 
-    local campaign = Ability:create("Campaign", "")
+    local campaign = Ability:create("Campaign", "Instruct men to not board woman only carts and people with light clothing to board low AC carts. Increases obtained money.")
     function campaign:upgraded()
         for i, plat in pairs(station.platforms) do
             plat.smartness = 1.0 - math.pow(0.9, self.level)

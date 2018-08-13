@@ -47,7 +47,8 @@ function StationClickable:draw(tab)
 
     love.graphics.setNewFont(20)
     if self.stationAvailable then
-        love.graphics.printf(self.linkedStation .. "     Cost: " .. self.cost, 1400+pos, self.clickable.y, self.clickable.width)
+        love.graphics.printf(self.linkedStation, 1400+pos, self.clickable.y, self.clickable.width)
+        love.graphics.printf("Cost: " .. self.cost, 1400+pos, self.clickable.y +25, self.clickable.width)
     else
         love.graphics.printf(self.linkedStation .. " bought. Click here to visit station.", 1400+pos, self.clickable.y, self.clickable.width)
     end

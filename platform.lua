@@ -369,10 +369,10 @@ end
 
 function Platform:initAbilities()
     local platform = self
-    platform.speedboardingAbility = Ability:create("Speedboarding", "")
-    platform.maxboardingAbility = Ability:create("Autoboarding", "")
-    platform.employeesAbility = Ability:create("Employees", "")
-    platform.fencesAbility = Ability:create("Fences", "")
+    platform.speedboardingAbility = Ability:create("Speedboarding", "People will board the trains faster.")
+    platform.maxboardingAbility = Ability:create("Autoboarding", "People will board fuller trains.")
+    platform.employeesAbility = Ability:create("Employees", "Employees will push people into trains.")
+    platform.fencesAbility = Ability:create("Fences", "Fences prevent people from falling on the tracks. If you push people against the fence they will board the train once it arrives.")
     platform.abilities["boardingSpeed"] = platform.speedboardingAbility
     platform.abilities["maxBoarding"] = platform.maxboardingAbility
     platform.abilities["employees"] = platform.employeesAbility
